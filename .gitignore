@@ -1,4 +1,5 @@
-/.phpunit.cache
+
+# Laravel specific
 /node_modules
 /public/build
 /public/hot
@@ -9,17 +10,58 @@
 .env
 .env.backup
 .env.production
-.phpactor.json
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
+auth.json
 npm-debug.log
 yarn-error.log
-/auth.json
+
+# SQLite database files
+*.sqlite
+*.sqlite-journal
+*.sqlite3
+*.db
+*.db-journal
+
+# Laravel storage
+/storage/app/*
+!/storage/app/public/
+!/storage/app/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+
+# Laravel framework
+/storage/framework/cache/*
+!/storage/framework/cache/data/
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/logs/*
+!/storage/framework/logs/.gitignore
+
+# PHPUnit
+/.phpunit.cache
+
+# IDE specific files
 /.fleet
 /.idea
-/.nova
 /.vscode
+/.nova
 /.zed
+.phpactor.json
 
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Qodo specific
 .qodo
+
+# Build artifacts
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
