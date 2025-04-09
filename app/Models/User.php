@@ -28,19 +28,20 @@ class User extends Authenticatable
     ];
 
 // Add helper methods
+    /**
+     * Determine if the user is an admin.
+     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isAuthor(): bool
+    /**
+     * Determine if the user is a customer.
+     */
+    public function isCustomer(): bool
     {
-        return $this->role === 'author' || $this->role === 'admin';
-    }
-
-    public function isReader(): bool
-    {
-        return $this->role === 'reader';
+        return $this->role === 'customer';
     }
 
     public function posts()
@@ -69,17 +70,14 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     /**
      * Get the user's initials
