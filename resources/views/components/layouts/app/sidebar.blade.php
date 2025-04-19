@@ -31,11 +31,19 @@
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">
+                @auth
                 <flux:profile
                     :name="auth()->user()->name"
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevrons-up-down"
                 />
+                @else
+                <flux:profile
+                    :name="__('Guest')"
+                    initials="G"
+                    icon-trailing="chevrons-up-down"
+                />
+                @endauth
 
                 <flux:menu class="w-[220px]">
                     <flux:menu.radio.group>
@@ -45,13 +53,22 @@
                                     <span
                                         class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                     >
-                                        {{ auth()->user()->initials() }}
+                                        @auth
+                                            {{ auth()->user()->initials() }}
+                                        @else
+                                            G
+                                        @endauth
                                     </span>
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    @auth
+                                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    @else
+                                        <span class="truncate font-semibold">{{ __('Guest') }}</span>
+                                        <span class="truncate text-xs">{{ __('Not logged in') }}</span>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -59,18 +76,24 @@
 
                     <flux:menu.separator />
 
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
+                    @auth
+                        <flux:menu.radio.group>
+                            <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        </flux:menu.radio.group>
 
-                    <flux:menu.separator />
+                        <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                                {{ __('Log Out') }}
+                            </flux:menu.item>
+                        </form>
+                    @else
+                        <flux:menu.radio.group>
+                            <flux:menu.item :href="route('login')" icon="arrow-right-end-on-rectangle" wire:navigate>{{ __('Log In') }}</flux:menu.item>
+                        </flux:menu.radio.group>
+                    @endauth
                 </flux:menu>
             </flux:dropdown>
         </flux:sidebar>
@@ -82,10 +105,17 @@
             <flux:spacer />
 
             <flux:dropdown position="top" align="end">
+                @auth
                 <flux:profile
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-down"
                 />
+                @else
+                <flux:profile
+                    initials="G"
+                    icon-trailing="chevron-down"
+                />
+                @endauth
 
                 <flux:menu>
                     <flux:menu.radio.group>
@@ -95,13 +125,22 @@
                                     <span
                                         class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                     >
-                                        {{ auth()->user()->initials() }}
+                                        @auth
+                                            {{ auth()->user()->initials() }}
+                                        @else
+                                            G
+                                        @endauth
                                     </span>
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    @auth
+                                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    @else
+                                        <span class="truncate font-semibold">{{ __('Guest') }}</span>
+                                        <span class="truncate text-xs">{{ __('Not logged in') }}</span>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -109,18 +148,24 @@
 
                     <flux:menu.separator />
 
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
+                    @auth
+                        <flux:menu.radio.group>
+                            <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        </flux:menu.radio.group>
 
-                    <flux:menu.separator />
+                        <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
+                                {{ __('Log Out') }}
+                            </flux:menu.item>
+                        </form>
+                    @else
+                        <flux:menu.radio.group>
+                            <flux:menu.item :href="route('login')" icon="arrow-right-end-on-rectangle" wire:navigate>{{ __('Log In') }}</flux:menu.item>
+                        </flux:menu.radio.group>
+                    @endauth
                 </flux:menu>
             </flux:dropdown>
         </flux:header>

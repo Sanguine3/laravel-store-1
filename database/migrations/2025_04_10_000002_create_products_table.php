@@ -20,7 +20,8 @@ return new class extends Migration
             $table->decimal('price', 8, 2);
             $table->unsignedInteger('stock_quantity')->default(0);
             $table->string('sku')->unique()->nullable();
-            $table->string('image_url')->nullable();
+            // Stores the image file path from Filament's image upload field.
+            $table->string('image')->nullable();
             $table->boolean('is_published')->default(false);
             $table->timestamps();
 

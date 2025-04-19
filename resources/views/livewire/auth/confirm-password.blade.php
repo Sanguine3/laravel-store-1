@@ -1,57 +1,31 @@
-<?php
+<div class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md mx-auto my-12 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-6">
+            <x-auth-header
+                :title="__('Confirm password')"
+                :description="__('This is a secure area of the application. Please confirm your password before continuing.')"
+            />
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\Layout;
-use Livewire\Volt\Component;
+            <!-- Session Status -->
+            <x-auth-session-status class="text-center" :status="session('status')" />
 
-new #[Layout('components.layouts.auth')] class extends Component {
-    public string $password = '';
+            <form wire:submit.prevent="confirmPassword" class="flex flex-col gap-6">
+                <flux:input
+                    wire:model.defer="password"
+                    :label="__('Password')"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    :placeholder="__('Password')"
+                />
+                @error('password')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
 
-    /**
-     * Confirm the current user's password.
-     */
-    public function confirmPassword(): void
-    {
-        $this->validate([
-            'password' => ['required', 'string'],
-        ]);
-
-        if (! Auth::guard('web')->validate([
-            'email' => Auth::user()->email,
-            'password' => $this->password,
-        ])) {
-            throw ValidationException::withMessages([
-                'password' => __('auth.password'),
-            ]);
-        }
-
-        session(['auth.password_confirmed_at' => time()]);
-
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
-    }
-}; ?>
-
-<div class="flex flex-col gap-6">
-    <x-auth-header
-        :title="__('Confirm password')"
-        :description="__('This is a secure area of the application. Please confirm your password before continuing.')"
-    />
-
-    <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
-
-    <form wire:submit="confirmPassword" class="flex flex-col gap-6">
-        <!-- Password -->
-        <flux:input
-            wire:model="password"
-            :label="__('Password')"
-            type="password"
-            required
-            autocomplete="new-password"
-            :placeholder="__('Password')"
-        />
-
-        <flux:button variant="primary" type="submit" class="w-full">{{ __('Confirm') }}</flux:button>
-    </form>
+                <flux:button variant="primary" type="submit" class="w-full">
+                    {{ __('Confirm') }}
+                </flux:button>
+            </form>
+        </div>
+    </div>
 </div>

@@ -15,7 +15,7 @@ class Product extends Model
         'slug',
         'price',
         'description',
-        'image_url',
+        'image',
         'category_id',
     ];
 
@@ -39,5 +39,6 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
 }
 ?>

@@ -89,7 +89,7 @@ class DatabaseSeeder extends Seeder
                     'slug'        => Str::slug($sampleProduct['name']),
                     'price'       => $sampleProduct['price'],
                     'description' => $sampleProduct['description'],
-                    'image_url'   => $sampleProduct['image'],
+                    'image'       => $sampleProduct['image'],
                     'category_id' => $category->id,
                 ]);
             }

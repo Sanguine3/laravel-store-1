@@ -19,7 +19,6 @@ class User extends Authenticatable
      * @var list<string>
      */
 
-// Add 'role' to fillable array
     protected $fillable = [
         'name',
         'email',
@@ -27,37 +26,18 @@ class User extends Authenticatable
         'role',
     ];
 
-// Add helper methods
-    /**
-     * Determine if the user is an admin.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
+    /* --------------------------------
+     |  Relationships / helpers
+     |--------------------------------*/
+    public function posts()    { return $this->hasMany(Post::class); }
+    public function comments() { return $this->hasMany(Comment::class); }
+    public function likes()    { return $this->hasMany(Like::class); }
 
-    /**
-     * Determine if the user is a customer.
-     */
-    public function isCustomer(): bool
-    {
-        return $this->role === 'customer';
-    }
-
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
-    }
+    /* --------------------------------
+     |  Convenience helpers
+     |--------------------------------*/
+    public function isAdmin(): bool    { return $this->role === 'admin'; }
+    public function isCustomer(): bool { return $this->role === 'customer'; }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -79,14 +59,15 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    /**
-     * Get the user's initials
-     */
     public function initials(): string
     {
         return Str::of($this->name)
             ->explode(' ')
-            ->map(fn (string $name) => Str::of($name)->substr(0, 1))
+            ->map(fn (string $name) => Str::substr($name, 0, 1))
             ->implode('');
     }
+
+    /* --------------------------------
+     |  Hidden / casts
+     |--------------------------------*/
 }

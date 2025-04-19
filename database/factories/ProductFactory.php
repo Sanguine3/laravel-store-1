@@ -34,7 +34,8 @@ class ProductFactory extends Factory
             'slug'        => Str::slug($name),
             'price'       => $this->faker->randomFloat(2, 10, 200),
             'description' => $this->faker->paragraph,
-            'image_url'   => $this->faker->imageUrl(300, 300, 'products'),
+            // Generate a relative image path instead of a full URL to reflect how the image upload stores the file path.
+            'image_url'   => '/storage/products/' . $this->faker->image('public/storage/products', 300, 300, 'products', false),
             'category_id' => $categoryId,
         ];
     }
