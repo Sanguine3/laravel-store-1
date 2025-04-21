@@ -32,16 +32,13 @@ class Login extends Component
             ]);
         }
 
-        // Prevent admin users from logging in via user login route
-        if (Auth::user() && Auth::user()->role === 'admin') {
-            Auth::logout();
-            throw ValidationException::withMessages([
-                'email' => __('Admins must log in through the admin panel.'),
-            ]);
-        }
-
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
+
+        // Redirect admin users to the admin dashboard
+        if (Auth::user() && Auth::user()->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
 
         return redirect()->intended(route('dashboard'));
     }
