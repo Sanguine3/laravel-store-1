@@ -15,13 +15,17 @@ class Product extends Model
         'slug',
         'price',
         'description',
-        'image',
+        'image_path',
         'category_id',
+        'is_published',
+        'stock_quantity',
+        'sku',
     ];
 
     // Optionally cast price to a float.
     protected $casts = [
         'price' => 'float',
+        'is_published' => 'boolean',
     ];
 
     /**

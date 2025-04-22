@@ -1,153 +1,111 @@
-<x-layouts.admin :title="isset($product) ? __('Edit Product') : __('Create Product')">
+<x-layouts.admin :title="$product ? 'Edit Product' : 'Create Product'">
     <div class="flex flex-col gap-6">
-        <div class="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-            <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
-                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
-                    {{ isset($product) ? __('Edit Product') : __('Create Product') }}
-                </h2>
-                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                    {{ isset($product) ? __('Update product information') : __('Add a new product to your store') }}
-                </p>
-            </div>
-
-            <form action="{{ isset($product) ? route('admin.products.update', $product->id) : route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
-                @csrf
-                @if(isset($product))
-                    @method('PUT')
-                @endif
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Left Column -->
-                    <div class="space-y-6">
-                        <!-- Product Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Product Name</label>
-                            <input type="text" name="name" id="name" value="{{ $product->name ?? old('name') }}" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" placeholder="Enter product name" required>
-                            @error('name')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- SKU -->
-                        <div>
-                            <label for="sku" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">SKU</label>
-                            <input type="text" name="sku" id="sku" value="{{ $product->sku ?? old('sku') }}" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" placeholder="Enter product SKU">
-                            @error('sku')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Price -->
-                        <div>
-                            <label for="price" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Price</label>
-                            <div class="relative mt-1 rounded-md shadow-sm">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span class="text-zinc-500 dark:text-zinc-400 sm:text-sm">$</span>
-                                </div>
-                                <input type="number" name="price" id="price" value="{{ $product->price ?? old('price') }}" class="block w-full rounded-md border-zinc-300 pl-7 pr-12 focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400 sm:text-sm" placeholder="0.00" step="0.01" min="0" required>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <span class="text-zinc-500 dark:text-zinc-400 sm:text-sm">USD</span>
-                                </div>
-                            </div>
-                            @error('price')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Category -->
-                        <div>
-                            <label for="category_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Category</label>
-                            <select id="category_id" name="category_id" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white">
-                                <option value="">Select a category</option>
-                                <option value="1" {{ (isset($product) && $product->category_id == 1) ? 'selected' : '' }}>Electronics</option>
-                                <option value="2" {{ (isset($product) && $product->category_id == 2) ? 'selected' : '' }}>Clothing</option>
-                                <option value="3" {{ (isset($product) && $product->category_id == 3) ? 'selected' : '' }}>Home & Kitchen</option>
-                                <option value="4" {{ (isset($product) && $product->category_id == 4) ? 'selected' : '' }}>Books</option>
-                            </select>
-                            @error('category_id')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Stock Quantity -->
-                        <div>
-                            <label for="stock_quantity" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Stock Quantity</label>
-                            <input type="number" name="stock_quantity" id="stock_quantity" value="{{ $product->stock_quantity ?? old('stock_quantity', 0) }}" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" min="0" required>
-                            @error('stock_quantity')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Status</label>
-                            <select id="status" name="status" class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white">
-                                <option value="draft" {{ (isset($product) && $product->status == 'draft') ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ (isset($product) && $product->status == 'published') ? 'selected' : '' }}>Published</option>
-                                <option value="archived" {{ (isset($product) && $product->status == 'archived') ? 'selected' : '' }}>Archived</option>
-                            </select>
-                            @error('status')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+         <!-- Session Status Message -->
+        @if (session('status'))
+            <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-700">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <flux:icon name="check-circle" class="h-5 w-5 text-green-400 dark:text-green-300" />
                     </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800 dark:text-green-200">
+                            {{ session('status') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <!-- Product Image -->
-                        <div>
-                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Product Image</label>
-                            <div class="mt-1 flex items-center">
-                                <div class="flex-shrink-0 h-32 w-32 overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800">
-                                    @if(isset($product) && $product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
-                                    @else
-                                        <div class="flex h-full w-full items-center justify-center">
-                                            <svg class="h-12 w-12 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="ml-4">
-                                    <div class="flex text-sm text-zinc-600 dark:text-zinc-400">
-                                        <label for="image" class="relative cursor-pointer rounded-md bg-white dark:bg-zinc-800 font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
-                                            <span>Upload a file</span>
-                                            <input id="image" name="image" type="file" class="sr-only" accept="image/*">
-                                        </label>
-                                        <p class="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">PNG, JPG, GIF up to 2MB</p>
-                                </div>
-                            </div>
-                            @error('image')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
+        <flux:card>
+             <form wire:submit="save">
+                <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
+                    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
+                        {{ $product ? 'Edit Product' : 'Create Product' }}
+                    </h2>
+                    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                        {{ $product ? 'Update product information' : 'Add a new product to your store' }}
+                    </p>
+                </div>
+
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Left Column: Basic Info -->
+                        <div class="md:col-span-2 space-y-6">
+                            <flux:field>
+                                <flux:label for="name">Product Name</flux:label>
+                                <flux:input wire:model="name" id="name" placeholder="Enter product name" required />
+                                <flux:error name="name" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label for="description">Description</flux:label>
+                                <flux:textarea wire:model="description" id="description" rows="8" placeholder="Enter product description" />
+                                <flux:error name="description" />
+                            </flux:field>
+
+                             <flux:field>
+                                 <flux:label for="price">Price</flux:label>
+                                <flux:input.group>
+                                     <flux:input.group.prefix>$</flux:input.group.prefix>
+                                    <flux:input wire:model="price" type="number" id="price" placeholder="0.00" step="0.01" min="0" required />
+                                     <flux:input.group.suffix>USD</flux:input.group.suffix>
+                                </flux:input.group>
+                                 <flux:error name="price" />
+                            </flux:field>
                         </div>
 
-                        <!-- Product Description -->
-                        <div>
-                            <label for="description" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Description</label>
-                            <div class="mt-1">
-                                <textarea id="description" name="description" rows="8" class="block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" placeholder="Enter product description">{{ $product->description ?? old('description') }}</textarea>
-                            </div>
-                            @error('description')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
+                        <!-- Right Column: Image, Category, Stock, Status -->
+                        <div class="md:col-span-1 space-y-6">
+                            <flux:field>
+                                <flux:label for="imageUrl">Product Image URL</flux:label>
+                                <div class="mt-1 flex flex-col items-center">
+                                     <!-- Image Preview -->
+                                    <div class="mb-2 h-32 w-32 overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                        @if ($imageUrl)
+                                            <img src="{{ $imageUrl }}" alt="Image preview" class="h-full w-full object-cover">
+                                        @else
+                                             <flux:icon name="photo" class="h-12 w-12 text-zinc-400" />
+                                        @endif
+                                    </div>
+                                    <!-- URL Input -->
+                                    <flux:input type="url" wire:model="imageUrl" id="imageUrl" placeholder="https://example.com/image.jpg" />
+                                </div>
+                                <flux:error name="imageUrl" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label for="category_id">Category</flux:label>
+                                <flux:select id="category_id" disabled>
+                                    <option value="">Select a category</option>
+                                    <option value="1">Electronics</option>
+                                </flux:select>
+                                 <flux:description>Category assignment not implemented.</flux:description>
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label for="stock_quantity">Stock Quantity</flux:label>
+                                <flux:input type="number" id="stock_quantity" value="0" min="0" disabled />
+                                <flux:description>Stock management not implemented.</flux:description>
+                            </flux:field>
+
+                             <flux:field>
+                                <flux:label for="status">Status</flux:label>
+                                <flux:select id="status" disabled>
+                                    <option value="draft">Draft</option>
+                                    <option value="published" selected>Published (Default)</option>
+                                </flux:select>
+                                <flux:description>Status management not implemented.</flux:description>
+                            </flux:field>
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Actions -->
-                <div class="mt-6 flex items-center justify-end space-x-3 border-t border-zinc-200 dark:border-zinc-700 pt-5">
-                    <a href="{{ route('admin.products') }}" class="inline-flex justify-center rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 py-2 px-4 text-sm font-medium text-zinc-700 dark:text-zinc-300 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Cancel
-                    </a>
-                    <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        {{ isset($product) ? 'Update Product' : 'Create Product' }}
-                    </button>
+                <div class="p-6 flex items-center justify-end space-x-3 bg-zinc-50 dark:bg-zinc-800 rounded-b-xl border-t border-zinc-200 dark:border-zinc-700">
+                    <flux:button :href="route('admin.products')" wire:navigate variant="subtle">Cancel</flux:button>
+                    <flux:button type="submit" variant="primary">{{ $product ? 'Update Product' : 'Create Product' }}</flux:button>
                 </div>
             </form>
-        </div>
+        </flux:card>
     </div>
 </x-layouts.admin>

@@ -35,5 +35,5 @@ Route::middleware('auth')->group(function () {
     Route::get('confirm-password', ConfirmPassword::class)->name('password.confirm');
 });
 
-Route::post('logout', App\Livewire\Actions\Logout::class)
+Route::post('logout', App\Livewire\Auth\Logout::class)
     ->name('logout');

@@ -5,44 +5,57 @@ namespace App\Livewire\Products;
 use App\Models\Product;
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProductDetail extends Component
 {
-    public $showModal = false;
-    public $productId = null;
-    public $product = null;
-    public $loading = false;
-    public $error = null;
+    protected $listeners = ['setProduct'];
 
-    public function mount($productId = null)
+    public bool $showModal = false;
+    public ?Product $product = null;
+    public bool $loading = false;
+    public ?string $error = null;
+
+    // Removed #[On] listener
+
+    public function setProduct($productId): void
     {
-        if ($productId) {
-            $this->showProductDetail($productId);
-        }
+        $this->resetError();
+        $this->product = null;
+        $this->showModal = true;
+        $this->loadProduct($productId);
     }
 
-    #[On('showProductDetail')]
-    public function showProductDetail($productId)
+    public function loadProduct($productId): void
     {
         $this->loading = true;
-        $this->showModal = true;
-        $this->productId = $productId;
         $this->error = null;
 
         try {
-            $this->product = Product::findOrFail($productId);
+            // Fetch only published products
+            $this->product = Product::with('category') // Eager load category if needed in modal view
+                                     ->where('is_published', true)
+                                     ->findOrFail($productId);
+        } catch (ModelNotFoundException $e) {
+            $this->error = 'Product not found.';
         } catch (\Exception $e) {
-            $this->error = 'Product not found or an error occurred.';
+            $this->error = 'An error occurred while loading the product.';
+            Log::error("Error loading product {$productId}: " . $e->getMessage()); // Log for debugging
         } finally {
             $this->loading = false;
         }
     }
 
-    public function returnToProducts()
+    public function closeModal(): void
     {
         $this->showModal = false;
-        $this->productId = null;
         $this->product = null;
+        $this->resetError();
+    }
+
+    public function resetError(): void
+    {
         $this->error = null;
     }
 
