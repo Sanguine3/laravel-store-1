@@ -9,6 +9,7 @@ use Livewire\Volt\Component;
 new class extends Component {
     public string $name = '';
     public string $email = '';
+    public bool $confirmingUserDeletion = false;
 
     /**
      * Mount the component.
@@ -67,6 +68,18 @@ new class extends Component {
 
         Session::flash('status', 'verification-link-sent');
     }
+
+    /**
+     * Delete the user's account.
+     */
+    public function deleteUser(): void
+    {
+        $user = Auth::user();
+
+        $user->delete();
+
+        $this->redirectIntended(default: route('login', absolute: false));
+    }
 }; ?>
 
 <section class="w-full">
@@ -79,7 +92,7 @@ new class extends Component {
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
 
-                @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
+                @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
                     <div>
                         <flux:text class="mt-4">
                             {{ __('Your email address is unverified.') }}
@@ -109,6 +122,25 @@ new class extends Component {
             </div>
         </form>
 
-        <livewire:settings.delete-user-form />
+        <div class="mt-6">
+            <flux:button variant="danger" type="button" class="w-full" wire:click="$set('confirmingUserDeletion', true)">
+                {{ __('Delete Account') }}
+            </flux:button>
+
+            <flux:modal wire:model="confirmingUserDeletion" class="max-w-lg">
+                <flux:heading size="lg">{{ __('Delete Account') }}</flux:heading>
+                <flux:text>
+                    {{ __('Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted.') }}
+                </flux:text>
+                <div class="flex justify-end mt-6 space-x-2 rtl:space-x-reverse">
+                    <flux:button type="button" wire:click="$set('confirmingUserDeletion', false)">
+                        {{ __('Cancel') }}
+                    </flux:button>
+                    <flux:button variant="danger" type="button" wire:click="deleteUser" wire:loading.attr="disabled">
+                        {{ __('Delete Account') }}
+                    </flux:button>
+                </div>
+            </flux:modal>
+        </div>
     </x-settings.layout>
 </section>

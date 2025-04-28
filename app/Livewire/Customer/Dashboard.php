@@ -3,9 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Product;
-// use App\Models\Order; // Removed
-// use App\Models\Category; // Removed
-// use Illuminate\Support\Facades\Auth; // Removed
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -17,13 +16,15 @@ class Dashboard extends Component
         // Get total product count (all statuses)
         $totalProducts = Product::query()->count();
 
-        // Removed category count query
-        // Removed user order count query
+        // Get recent orders for current user (limit 5)
+        $recentOrders = Order::where('user_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
 
         return view('dashboard', [
             'totalProducts' => $totalProducts,
-            // 'totalCategories' => $totalCategories, // Removed
-            // 'userOrderCount' => $userOrderCount, // Removed
+            'recentOrders' => $recentOrders,
         ]);
     }
 } 

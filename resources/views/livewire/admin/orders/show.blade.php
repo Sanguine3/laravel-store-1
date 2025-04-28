@@ -55,22 +55,24 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Order Summary -->
             <div class="md:col-span-2">
-                <flux:card>
+                <x-card>
                     <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Order Items</h2>
                     </div>
                     <div class="overflow-x-auto">
-                        <flux:table>
-                            <flux:table.columns>
-                                <flux:table.column>Product</flux:table.column>
-                                <flux:table.column>Price</flux:table.column>
-                                <flux:table.column>Quantity</flux:table.column>
-                                <flux:table.column>Total</flux:table.column>
-                            </flux:table.columns>
-                            <flux:table.rows>
+                        <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700"> {{-- Added table with classes --}}
+                            <thead class="bg-zinc-50 dark:bg-zinc-800"> {{-- Added thead with classes --}}
+                                <tr> {{-- Added tr --}}
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Product</th> {{-- Replaced flux:table.column with th --}}
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Price</th> {{-- Replaced flux:table.column with th --}}
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Quantity</th> {{-- Replaced flux:table.column with th --}}
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total</th> {{-- Replaced flux:table.column with th --}}
+                                </tr> {{-- Closed tr --}}
+                            </thead> {{-- Closed thead --}}
+                            <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700"> {{-- Added tbody with classes --}}
                                 @forelse($order->items as $item)
-                                    <flux:table.row wire:key="item-{{ $item->id }}">
-                                        <flux:table.cell>
+                                    <tr wire:key="item-{{ $item->id }}"> {{-- Replaced flux:table.row with tr --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white"> {{-- Replaced flux:table.cell with td --}}
                                             <div class="flex items-center gap-3">
                                                 <div class="flex-shrink-0 h-10 w-10 rounded-md overflow-hidden border border-zinc-200 dark:border-zinc-700">
                                                     <img class="h-full w-full object-cover" src="{{ $item->product?->image_path ?? 'https://via.placeholder.com/100' }}" alt="{{ $item->product?->name }}">
@@ -80,25 +82,19 @@
                                                     <span class="text-xs text-zinc-500 dark:text-zinc-400">SKU: {{ $item->product?->sku ?? 'N/A' }}</span>
                                                 </div>
                                             </div>
-                                        </flux:table.cell>
-                                        <flux:table.cell>
-                                            ${{ number_format($item->price, 2) }}
-                                        </flux:table.cell>
-                                        <flux:table.cell>
-                                            {{ $item->quantity }}
-                                        </flux:table.cell>
-                                        <flux:table.cell>
-                                            ${{ number_format($item->price * $item->quantity, 2) }}
-                                        </flux:table.cell>
-                                    </flux:table.row>
+                                        </td> {{-- Closed td --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400"> ${{ number_format($item->price, 2) }} </td> {{-- Replaced flux:table.cell with td --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400"> {{ $item->quantity }} </td> {{-- Replaced flux:table.cell with td --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400"> ${{ number_format($item->price * $item->quantity, 2) }} </td> {{-- Replaced flux:table.cell with td --}}
+                                    </tr> {{-- Closed tr --}}
                                 @empty
-                                    <flux:table.row>
-                                        <flux:table.cell colspan="4">
+                                    <tr> {{-- Replaced flux:table.row with tr --}}
+                                        <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white"> {{-- Replaced flux:table.cell with td, adjusted colspan --}}
                                             <div class="text-center py-4">No items found in this order.</div>
-                                        </flux:table.cell>
-                                    </flux:table.row>
+                                        </td> {{-- Closed td --}}
+                                    </tr> {{-- Closed tr --}}
                                 @endforelse
-                            </flux:table.rows>
+                            </tbody> {{-- Closed tbody --}}
                              {{-- Table Footer --}}
                              <tfoot>
                                 <tr class="border-t border-zinc-200 dark:border-zinc-700">
@@ -118,15 +114,15 @@
                                     <td class="px-6 py-3 whitespace-nowrap text-sm font-bold text-zinc-900 dark:text-white">${{ number_format($order->total_amount ?? 0, 2) }}</td>
                                 </tr>
                              </tfoot>
-                        </flux:table>
+                         </table> {{-- Closed table --}}
                     </div>
-                </flux:card>
+                </x-card>
             </div>
 
             <!-- Customer Information -->
             <div class="md:col-span-1 space-y-6">
                 <!-- Customer Details -->
-                <flux:card>
+                <x-card>
                     <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                          <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Customer</h2>
                     </div>
@@ -146,10 +142,10 @@
                         </div>
                         @endif
                     </div>
-                </flux:card>
+                </x-card>
 
                 <!-- Shipping Address -->
-                 <flux:card>
+                 <x-card>
                     <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Shipping Address</h2>
                     </div>
@@ -160,10 +156,10 @@
                         <p>{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
                         <p>{{ $order->shipping_country }}</p>
                     </div>
-                </flux:card>
+                </x-card>
 
                  <!-- Billing Address -->
-                 <flux:card>
+                 <x-card>
                     <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Billing Address</h2>
                     </div>
@@ -174,10 +170,10 @@
                         <p>{{ $order->billing_city }}, {{ $order->billing_state }} {{ $order->billing_zip }}</p>
                         <p>{{ $order->billing_country }}</p>
                     </div>
-                </flux:card>
+                </x-card>
 
                 <!-- Payment Information -->
-                 <flux:card>
+                 <x-card>
                     <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Payment</h2>
                     </div>
@@ -185,36 +181,10 @@
                         <p><span class="font-medium text-zinc-900 dark:text-white">Method:</span> {{ $order->payment_method ?? 'N/A' }}</p>
                         <p><span class="font-medium text-zinc-900 dark:text-white">Status:</span> {{ ucfirst($order->payment_status ?? 'N/A') }}</p>
                     </div>
-                </flux:card>
+                </x-card>
             </div>
         </div>
 
-        <!-- Order Notes (Static - Requires notes relationship/logic) -->
-        <flux:card>
-             <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
-                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Order Notes (Not Implemented)</h2>
-             </div>
-            <div class="p-6 opacity-50">
-                 <div class="mb-4">
-                     <flux:textarea id="notes" placeholder="Add a note..." rows="3" disabled />
-                 </div>
-                 <div class="flex justify-end">
-                     <flux:button type="button" variant="primary" disabled>Add Note</flux:button>
-                 </div>
-                 <div class="mt-6 space-y-4">
-                     <div class="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-lg">
-                         <div class="flex justify-between items-start">
-                             <div>
-                                 <p class="text-sm font-medium text-zinc-900 dark:text-white">Admin User</p>
-                                 <p class="text-xs text-zinc-500 dark:text-zinc-400">April 21, 2025 at 11:30 AM</p>
-                             </div>
-                            <flux:button type="button" variant="ghost" size="sm" color="secondary" icon="x-mark" disabled/>
-                         </div>
-                         <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-300">Example note text.</p>
-                     </div>
-                 </div>
-             </div>
-        </flux:card>
 
         <!-- Back Button -->
         <div class="flex justify-start">

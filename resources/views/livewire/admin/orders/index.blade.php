@@ -76,7 +76,7 @@
                               <flux:table.row>
                                  <flux:table.cell colspan="6">
                                      <div class="text-center py-12">
-                                        <flux:icon name="clipboard-list" class="h-12 w-12 mx-auto text-gray-400" />
+                                        <flux:icon.clipboard variant="outline" class="h-12 w-12 mx-auto text-gray-400" />
                                         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No orders found</h3>
                                         @if($search)
                                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Adjust your search criteria.</p>

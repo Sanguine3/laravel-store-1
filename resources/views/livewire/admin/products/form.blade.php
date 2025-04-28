@@ -16,7 +16,7 @@
             </div>
         @endif
 
-        <flux:card>
+        <x-card>
              <form wire:submit="save">
                 <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
                     <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">
@@ -75,26 +75,31 @@
 
                             <flux:field>
                                 <flux:label for="category_id">Category</flux:label>
-                                <flux:select id="category_id" disabled>
+                                <flux:select wire:model="category_id" id="category_id" required> {{-- Removed disabled, added wire:model, required --}}
                                     <option value="">Select a category</option>
-                                    <option value="1">Electronics</option>
+                                    @foreach($categories as $category) {{-- Loop through categories --}}
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
                                 </flux:select>
-                                 <flux:description>Category assignment not implemented.</flux:description>
+                                <flux:error name="category_id" /> {{-- Add error display --}}
+                                {{-- Removed description --}}
                             </flux:field>
 
                             <flux:field>
                                 <flux:label for="stock_quantity">Stock Quantity</flux:label>
-                                <flux:input type="number" id="stock_quantity" value="0" min="0" disabled />
-                                <flux:description>Stock management not implemented.</flux:description>
+                                <flux:input wire:model="stock_quantity" type="number" id="stock_quantity" min="0" required /> {{-- Removed disabled, value, added wire:model, required --}}
+                                <flux:error name="stock_quantity" /> {{-- Add error display --}}
+                                {{-- Removed description --}}
                             </flux:field>
 
                              <flux:field>
                                 <flux:label for="status">Status</flux:label>
-                                <flux:select id="status" disabled>
-                                    <option value="draft">Draft</option>
-                                    <option value="published" selected>Published (Default)</option>
+                                <flux:select wire:model="is_published" id="status" required> {{-- Removed disabled, added wire:model, required --}}
+                                    <option value="0">Draft</option> {{-- Value 0 for false --}}
+                                    <option value="1">Published</option> {{-- Value 1 for true, removed selected --}}
                                 </flux:select>
-                                <flux:description>Status management not implemented.</flux:description>
+                                <flux:error name="is_published" /> {{-- Add error display --}}
+                                {{-- Removed description --}}
                             </flux:field>
                         </div>
                     </div>
@@ -106,6 +111,6 @@
                     <flux:button type="submit" variant="primary">{{ $product ? 'Update Product' : 'Create Product' }}</flux:button>
                 </div>
             </form>
-        </flux:card>
+        </x-card>
     </div>
 </x-layouts.admin>
