@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.layouts.app')]
 class OrderList extends Component
 {
     use WithPagination;
@@ -38,8 +38,8 @@ class OrderList extends Component
             ->latest()
             ->paginate(10);
 
-        return view('admin.orders.index', [
+        return view('livewire.admin.orders.index', [
             'orders' => $orders,
         ]);
     }
-} 
+}

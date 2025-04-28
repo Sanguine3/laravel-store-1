@@ -1,100 +1,102 @@
 <x-layouts.admin :title="__('Orders')">
     <div class="flex flex-col gap-6">
-        <!-- Header with Actions -->
+        <!-- Search and Actions -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-2">
-                <div class="relative">
-                     <flux:input wire:model.live.debounce.300ms="search" id="order-search" placeholder="Search orders (ID, Name)..." icon="magnifying-glass" />
-                </div>
-
-                <flux:select wire:model.live="statusFilter" id="status-filter" class="min-w-[150px]">
-                    <option selected value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                    {{-- Add other statuses like shipped if needed/handled --}}
-                </flux:select>
+            <div class="flex-1">
+                <flux:input
+                    wire:model.live.debounce.300ms="search"
+                    id="order-search"
+                    placeholder="Search orders (ID, Name)..."
+                    icon="magnifying-glass"
+                    clearable
+                    class="w-full"
+                />
             </div>
-            {{-- Removed static Filter/Export --}}
+            <flux:dropdown class="min-w-[160px] md:min-w-[200px] w-full sm:w-auto" placement="bottom-start">
+                <flux:button icon:trailing="chevron-down" color="outline" class="w-full flex justify-between">
+                    {{ $statusFilter === '' ? 'All Status' : ucfirst($statusFilter) }}
+                </flux:button>
+                <flux:menu>
+                    <flux:menu.radio.group wire:model.live="statusFilter">
+                        <flux:menu.radio value="">All Status</flux:menu.radio>
+                        <flux:menu.radio value="pending">Pending</flux:menu.radio>
+                        <flux:menu.radio value="processing">Processing</flux:menu.radio>
+                        <flux:menu.radio value="completed">Completed</flux:menu.radio>
+                        <flux:menu.radio value="cancelled">Cancelled</flux:menu.radio>
+                        <flux:menu.radio value="shipped">Shipped</flux:menu.radio>
+                    </flux:menu.radio.group>
+                </flux:menu>
+            </flux:dropdown>
         </div>
-
         <!-- Orders Table -->
-        <flux:card>
-            <div class="overflow-x-auto">
-                 <flux:table>
-                    <flux:table.columns>
-                        <flux:table.column>Order ID</flux:table.column>
-                        <flux:table.column>Customer</flux:table.column>
-                        <flux:table.column>Date</flux:table.column>
-                        <flux:table.column>Status</flux:table.column>
-                        <flux:table.column>Total</flux:table.column>
-                        <flux:table.column align="end">Actions</flux:table.column>
-                    </flux:table.columns>
-                     <flux:table.rows>
-                         @forelse($orders as $order)
-                             <flux:table.row wire:key="order-{{ $order->id }}">
-                                <flux:table.cell>
-                                    <span class="font-mono text-sm">#{{ $order->id }}</span>
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                     <div class="flex items-center gap-3">
-                                         <flux:avatar size="sm">
-                                             {{ strtoupper(substr($order->user?->name ?? 'G', 0, 2)) }}
-                                         </flux:avatar>
-                                         <div class="flex flex-col">
-                                             <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $order->user?->name ?? 'Guest' }}</span>
-                                             <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->user?->email }}</span>
-                                         </div>
-                                     </div>
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                     <div class="text-sm text-zinc-900 dark:text-white">{{ $order->created_at->format('M d, Y') }}</div>
-                                     <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->created_at->format('g:i A') }}</div>
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                     <flux:badge size="sm" inset="top bottom" @class([
-                                        'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' => $order->status === 'completed',
-                                        'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' => $order->status === 'shipped',
-                                        'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400' => $order->status === 'processing' || $order->status === 'pending',
-                                        'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' => $order->status === 'cancelled',
-                                        'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-400' => !in_array($order->status, ['completed', 'processing', 'pending', 'cancelled', 'shipped'])
-                                    ])>
-                                        {{ ucfirst($order->status) }}
-                                    </flux:badge>
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                     <span class="text-sm font-medium text-zinc-900 dark:text-white">${{ number_format($order->total_amount, 2) }}</span> {{-- Adjust total_amount property name --}}
-                                </flux:table.cell>
-                                <flux:table.cell align="end">
-                                    <div class="flex justify-end space-x-1">
-                                         <flux:button size="sm" variant="ghost" :href="route('admin.orders.show', $order->id)" wire:navigate icon="eye" />
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                <thead class="bg-zinc-50 dark:bg-zinc-800">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Order ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Customer</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
+                    @forelse($orders as $order)
+                        <tr wire:key="order-{{ $order->id }}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
+                                <span class="font-mono text-sm">#{{ $order->id }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center">
+                                        <span class="text-xs font-bold text-zinc-600 dark:text-zinc-300">{{ strtoupper(substr($order->user?->name ?? 'G', 0, 2)) }}</span>
                                     </div>
-                                </flux:table.cell>
-                             </flux:table.row>
-                         @empty
-                              <flux:table.row>
-                                 <flux:table.cell colspan="6">
-                                     <div class="text-center py-12">
-                                        <flux:icon.clipboard variant="outline" class="h-12 w-12 mx-auto text-gray-400" />
-                                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No orders found</h3>
-                                        @if($search)
-                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Adjust your search criteria.</p>
-                                        @endif
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $order->user?->name ?? 'Guest' }}</span>
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->user?->email }}</span>
                                     </div>
-                                 </flux:table.cell>
-                             </flux:table.row>
-                         @endforelse
-                     </flux:table.rows>
-                </flux:table>
-            </div>
-
-            <!-- Pagination -->
-            @if ($orders->hasPages())
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
+                                <div>{{ $order->created_at->format('M d, Y') }}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->created_at->format('g:i A') }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                @php
+                                    $statusClasses = [
+                                        'completed' => 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
+                                        'shipped' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400',
+                                        'processing' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400',
+                                        'pending' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400',
+                                        'cancelled' => 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400',
+                                    ];
+                                    $statusClass = $statusClasses[$order->status] ?? 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-400';
+                                @endphp
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {{ $statusClass }}">{{ ucfirst($order->status) }}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
+                                ${{ number_format($order->total_amount, 2) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <flux:button href="{{ route('admin.orders.show', $order->id) }}" as="a" color="info" size="sm" icon="eye" tooltip="View" class="mr-1 !bg-blue-500 !text-white hover:!bg-blue-600 focus:!ring-blue-400" />
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-zinc-500 dark:text-zinc-400">No orders found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        @if ($orders->hasPages())
             <div class="p-4 border-t border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-                 {{ $orders->links() }}
+                <p class="text-sm text-zinc-700 dark:text-zinc-300">
+                {{ $orders->links() }}
+                </p>
             </div>
-            @endif
-        </flux:card>
+        @endif
     </div>
 </x-layouts.admin>

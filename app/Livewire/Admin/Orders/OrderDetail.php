@@ -6,7 +6,7 @@ use App\Models\Order;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.layouts.app')]
 class OrderDetail extends Component
 {
     public Order $order;
@@ -19,8 +19,7 @@ class OrderDetail extends Component
 
     public function mount(int $id): void
     {
-        // Placeholder: Load order with relationships (e.g., user, items)
-        $this->order = Order::with('user', 'items.product')->findOrFail($id);
+        $this->order = Order::with('user', 'orderItems.product')->findOrFail($id);
         $this->selectedStatus = $this->order->status;
     }
 
@@ -45,6 +44,6 @@ class OrderDetail extends Component
 
     public function render()
     {
-        return view('admin.orders.show');
+        return view('livewire.admin.orders.show');
     }
-} 
+}

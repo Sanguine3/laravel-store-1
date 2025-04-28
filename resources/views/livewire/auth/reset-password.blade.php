@@ -1,14 +1,13 @@
-<x-layouts.auth>
-    <div class="flex flex-col gap-6">
+<div class="flex flex-col gap-6">
     <x-auth-header :title="__('Reset password')" :description="__('Please enter your new password below')" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
 
-    <form wire:submit.prevent="resetPassword" class="flex flex-col gap-6">
+    <form wire:submit="resetPassword" class="flex flex-col gap-6">
         <!-- Email Address -->
         <flux:input
-            wire:model.defer="email"
+            wire:model="email"
             :label="__('Email')"
             type="email"
             required
@@ -17,7 +16,7 @@
 
         <!-- Password -->
         <flux:input
-            wire:model.defer="password"
+            wire:model="password"
             :label="__('Password')"
             type="password"
             required
@@ -27,7 +26,7 @@
 
         <!-- Confirm Password -->
         <flux:input
-            wire:model.defer="password_confirmation"
+            wire:model="password_confirmation"
             :label="__('Confirm password')"
             type="password"
             required
@@ -35,13 +34,10 @@
             :placeholder="__('Confirm password')"
         />
 
-        <input type="hidden" name="token" wire:model.defer="token">
-
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
                 {{ __('Reset password') }}
             </flux:button>
         </div>
     </form>
-    </div>
-</x-layouts.auth>
+</div>

@@ -31,19 +31,16 @@ class Index extends Component
     {
         $user = Auth::user();
 
-        $rules = [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id . ',id',
-            'password' => 'nullable|string|min:8|confirmed',
-        ];
-
-        $validated = $this->validate($rules);
+        $validated = $this->validate();
 
         if (!empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
         } else {
             unset($validated['password']); // Don't update password if empty
         }
+
+        // Remove email from validated data before updating
+        unset($validated['email']);
 
         $user->update($validated);
 

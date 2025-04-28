@@ -70,7 +70,7 @@
                                 </tr> {{-- Closed tr --}}
                             </thead> {{-- Closed thead --}}
                             <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700"> {{-- Added tbody with classes --}}
-                                @forelse($order->items as $item)
+                                @forelse(($order->orderItems ?? []) as $item)
                                     <tr wire:key="item-{{ $item->id }}"> {{-- Replaced flux:table.row with tr --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white"> {{-- Replaced flux:table.cell with td --}}
                                             <div class="flex items-center gap-3">

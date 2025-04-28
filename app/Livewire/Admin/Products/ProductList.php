@@ -8,12 +8,11 @@ use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 use App\Models\Category;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.layouts.app')]
 class ProductList extends Component
 {
     use WithPagination;
 
-    // Placeholder for search/filter properties
     public string $search = '';
     public string $categoryFilter = '';
     public string $statusFilter = '';
@@ -44,17 +43,16 @@ class ProductList extends Component
             )
             ->paginate(10);
 
-        return view('admin.products.index', [
+        return view('livewire.admin.products.index', [
             'products' => $products,
             'categories' => $this->allCategories, // Pass stored categories to view
         ]);
     }
 
-    // Placeholder for delete action
     public function delete(int $id): void
     {
         Product::findOrFail($id)->delete();
         // Add feedback
         session()->flash('status', 'Product deleted successfully.');
     }
-} 
+}

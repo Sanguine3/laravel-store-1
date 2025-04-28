@@ -12,7 +12,4 @@ return [
     */
 
     App\Providers\AppServiceProvider::class,
-    // App\Providers\Filament\AdminPanelProvider::class, // Removed
-    // App\Providers\Filament\Sanguin3PanelProvider::class, // Removed
-    App\Providers\VoltServiceProvider::class,
 ];

@@ -1,9 +1,10 @@
-<x-layouts.admin :title="__('Admin Dashboard')">
+<x-layouts.admin :title="__('Dashboard')">
+    {{ $slot ?? '' }}
     <div class="flex flex-col gap-6">
         <!-- Summary Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Total Orders Card -->
-            <x-card class="p-6">
+            <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
                         <flux:icon name="shopping-bag" class="h-6 w-6" />
@@ -16,7 +17,7 @@
             </x-card>
 
             <!-- Pending Orders Card -->
-            <x-card class="p-6">
+            <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-4">
                         <flux:icon name="clock" class="h-6 w-6" />
@@ -29,7 +30,7 @@
             </x-card>
 
             <!-- Total Customers Card -->
-            <x-card class="p-6">
+            <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-4">
                         <flux:icon name="users" class="h-6 w-6" />
@@ -42,7 +43,7 @@
             </x-card>
 
             <!-- Total Products Card -->
-            <x-card class="p-6">
+            <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 mr-4">
                         <flux:icon name="cube" class="h-6 w-6" />

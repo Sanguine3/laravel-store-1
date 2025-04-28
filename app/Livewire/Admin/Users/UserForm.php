@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.layouts.app')]
 class UserForm extends Component
 {
     public ?User $user = null;
@@ -22,12 +22,20 @@ class UserForm extends Component
     public string $password = '';
     public string $password_confirmation = '';
 
+    #[Rule('required|string|in:admin,customer')] // Add role property and rule
+    public string $role = 'customer'; // Default to customer
+
+    #[Rule('required|string|in:active,inactive')] // Add status property and rule
+    public string $status = 'active'; // Default to active
+
     public function mount(?int $id = null): void
     {
         if ($id) {
             $this->user = User::findOrFail($id);
             $this->name = $this->user->name;
             $this->email = $this->user->email;
+            $this->role = $this->user->role ?? 'customer'; // Load existing role
+            $this->status = $this->user->status ?? 'active'; // Load existing status
         }
     }
 
@@ -37,6 +45,8 @@ class UserForm extends Component
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . ($this->user?->id ?? 'NULL') . ',id',
             'password' => $this->user ? 'nullable|string|min:8|confirmed' : 'required|string|min:8|confirmed',
+            'role' => 'required|string|in:admin,customer', // Add role validation
+            'status' => 'required|string|in:active,inactive', // Add status validation
         ];
 
         $validated = $this->validate($rules);
@@ -48,13 +58,21 @@ class UserForm extends Component
             } else {
                 unset($validated['password']); // Don't update password if empty
             }
-            $this->user->update($validated);
+            // Ensure role is included in the update data
+            $updateData = $validated;
+            // $updateData['role'] = $validated['role']; // Role is already in $validated due to rules array
+            $updateData['status'] = $validated['status']; // Add status to update data
+            $this->user->update($updateData);
             // Add success feedback (e.g., session flash)
             session()->flash('status', 'User updated successfully.');
         } else {
             // Create new user
             $validated['password'] = bcrypt($validated['password']);
-            User::create($validated);
+            // Ensure role is included in the create data
+            $createData = $validated;
+            // $createData['role'] = $validated['role']; // Role is already in $validated due to rules array
+            $createData['status'] = $validated['status']; // Add status to create data
+            User::create($createData);
             // Add success feedback
             session()->flash('status', 'User created successfully.');
         }
@@ -64,6 +82,6 @@ class UserForm extends Component
 
     public function render()
     {
-        return view('admin.users.form');
+        return view('livewire.admin.users.form');
     }
-} 
+}

@@ -8,25 +8,33 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
+#[Layout('components.layouts.auth')]
 class Login extends Component
 {
-    public $email = '';
-    public $password = '';
-    public $remember = false;
+    #[Validate('required|string|email')]
+    public string $email = '';
 
-    public function login()
+    #[Validate('required|string')]
+    public string $password = '';
+
+    public bool $remember = false;
+
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function login(): void
     {
-        $this->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+        $this->validate();
 
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
+
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
@@ -35,21 +43,22 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        // Redirect admin users to the admin dashboard
-        if (Auth::user() && Auth::user()->role === 'admin') {
-            return redirect()->intended(route('admin.dashboard'));
-        }
-
-        return redirect()->intended(route('dashboard'));
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
-    protected function ensureIsNotRateLimited()
+    /**
+     * Ensure the authentication request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
+
         event(new Lockout(request()));
+
         $seconds = RateLimiter::availableIn($this->throttleKey());
+
         throw ValidationException::withMessages([
             'email' => __('auth.throttle', [
                 'seconds' => $seconds,
@@ -58,13 +67,11 @@ class Login extends Component
         ]);
     }
 
-    protected function throttleKey()
+    /**
+     * Get the authentication rate limiting throttle key.
+     */
+    protected function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
-    }
-
-    public function render()
-    {
-        return view('livewire.auth.login');
     }
 }

@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin')]
+#[Layout('components.layouts.app')]
 class UserList extends Component
 {
     use WithPagination;
@@ -30,7 +30,7 @@ class UserList extends Component
             ->when($this->roleFilter, fn($query, $role) => $query->where('role', $role))
             ->paginate(10);
 
-        return view('admin.users.index', [
+        return view('livewire.admin.users.index', [
             'users' => $users,
         ]);
     }
@@ -40,4 +40,4 @@ class UserList extends Component
         User::findOrFail($id)->delete();
         session()->flash('status', 'User deleted successfully.');
     }
-} 
+}

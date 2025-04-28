@@ -1,21 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
-
-// Admin Components
-use App\Livewire\Admin\Dashboard as AdminDashboard; // Alias Admin Dashboard
-use App\Livewire\Admin\Users\UserList;
-use App\Livewire\Admin\Users\UserForm;
-use App\Livewire\Admin\Orders\OrderList;
+use App\Http\Controllers\Customer\ProductController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Customer\DashboardController;
+use App\Http\Controllers\Customer\OrderController;
+use App\Livewire\Admin\Categories\CategoryForm;
+use App\Livewire\Admin\Categories\CategoryList;
 use App\Livewire\Admin\Orders\OrderDetail;
-use App\Livewire\Admin\Products\ProductList;
+use App\Livewire\Admin\Orders\OrderList;
 use App\Livewire\Admin\Products\ProductForm;
+use App\Livewire\Admin\Products\ProductList;
 use App\Livewire\Admin\Profile\Index as AdminProfileIndex;
+use App\Livewire\Admin\Users\UserForm;
+use App\Livewire\Admin\Users\UserList;
+use App\Livewire\Settings\Appearance;
+use App\Livewire\Settings\Password;
+use App\Livewire\Settings\Profile;
+use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
 
-// Customer Facing Components
-use App\Livewire\Dashboard as CustomerDashboard; // Alias Customer Dashboard
-use App\Livewire\Products\ProductIndex; // Import new component
 
 /*
 |--------------------------------------------------------------------------
@@ -28,30 +31,35 @@ use App\Livewire\Products\ProductIndex; // Import new component
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+// Changed to use Customer\ProductController@index
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+// Added route for showing a single product
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Use alias for Customer Dashboard
-    Route::get('/dashboard', CustomerDashboard::class)
+    // Changed to use DashboardController
+    Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Customer facing products page
-    Route::get('/products', ProductIndex::class)->name('products.index');
-
-    // Remove the dedicated product detail route as details are shown in a modal
-    // Route::get('/products/{productId}', function ($productId) {
-    //     return view('product-details', ['productId' => $productId]);
-    // })->name('product.details');
+    // Changed to use OrderController
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
 
     // Settings routes
-    Route::redirect('settings', 'settings/profile');
-    Volt::route('settings/profile', 'users.profile')->name('settings.profile');
-    Volt::route('settings/password', 'users.password')->name('settings.password');
-    Volt::route('settings/appearance', 'users.appearance')->name('settings.appearance');
+    Route::middleware(['auth'])->group(function () {
+        Route::redirect('settings', 'settings/profile');
+
+        Route::get('settings/profile', Profile::class)->name('settings.profile');
+        Route::get('settings/password', Password::class)->name('settings.password');
+        Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+    });
+
 
     // Admin routes
     Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-        // Use alias for Admin Dashboard
+        // Changed to use Admin Dashboard Controller
         Route::get('/', AdminDashboard::class)->name('dashboard');
 
         // Admin Products
@@ -62,17 +70,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/products/{id}/edit', ProductForm::class)->name('products.edit');
 
         // Admin Categories
-        Route::get('/categories', function () {
-            return view('admin.categories.index');
-        })->name('categories');
+        Route::get('/categories', CategoryList::class)->name('categories');
 
-        Route::get('/categories/create', function () {
-            return view('admin.categories.form');
-        })->name('categories.create');
+        Route::get('/categories/create', CategoryForm::class)->name('categories.create');
 
-        Route::get('/categories/{id}/edit', function ($id) {
-            return view('admin.categories.form', ['category' => null]);
-        })->name('categories.edit');
+        Route::get('/categories/{id}/edit', CategoryForm::class)->name('categories.edit');
 
         // Admin Orders
         Route::get('/orders', OrderList::class)->name('orders');

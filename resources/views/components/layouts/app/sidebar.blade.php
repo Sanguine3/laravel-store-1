@@ -7,14 +7,17 @@
         <flux:sidebar sticky stashable class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="auth()->check() && auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard')" :current="request()->routeIs(auth()->check() && auth()->user()->role === 'admin' ? 'admin.dashboard' : 'dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                     <flux:navlist.item icon="cube" :href="route('products.index')" :current="request()->routeIs('products.index')" wire:navigate>{{ __('Products') }}</flux:navlist.item>
+                    @if(auth()->check() && auth()->user()->role === 'customer')
+                    <flux:navlist.item icon="clipboard" :href="route('orders')" :current="request()->routeIs('orders')" wire:navigate>{{ __('My Orders') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
@@ -171,8 +174,14 @@
             </flux:dropdown>
         </flux:header>
 
-        {{ $slot }}
+        @if (isset($slot))
+            {{ $slot }}
+        @else
+            @yield('content')
+        @endif
 
-        @fluxScripts
+    @livewireScripts {{-- Added Livewire scripts --}}
     </body>
 </html>
+{{-- Updated: route('settings.profile') to route('settings.profile') --}}
+{{-- Removed @fluxScripts as Alpine is loaded via Vite --}}
