@@ -30,7 +30,8 @@
                     @else
                         <a
                             href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                            {{-- Added button styling --}}
+                            class="inline-block rounded-md bg-zinc-900 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:focus-visible:outline-zinc-600"
                         >
                             Log in
                         </a>
@@ -38,7 +39,8 @@
                         @if (Route::has('register'))
                             <a
                                 href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                {{-- Added button styling --}}
+                                class="inline-block rounded-md bg-zinc-900 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:focus-visible:outline-zinc-600">
                                 Register
                             </a>
                         @endif

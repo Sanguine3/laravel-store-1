@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Controllers\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Support\Facades\Auth; // Keep Auth facade for consistency or use $request->user()
+
+class PasswordController extends Controller
+{
+    /**
+     * Show the form for editing the user's password.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function edit()
+    {
+        return view('settings.password'); // Placeholder, view needs creation
+    }
+
+    /**
+     * Update the user's password.
+     *
+     * @param  \Illuminate\Http\Request  $request // We'll likely create a FormRequest later
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request)
+    {
+        // 1. Validate the request data
+        // Note: The 'current_password' rule automatically checks against the authenticated user
+        $validated = $request->validateWithBag('updatePassword', [ // Use a specific error bag
+            'current_password' => ['required', 'string', 'current_password'],
+            'password' => ['required', 'string', PasswordRule::defaults(), 'confirmed'],
+        ]);
+
+        // 2. Update the user's password
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        // 3. Redirect back with success status
+        // The 'password-updated' status matches the check in the Blade view
+        return back()->with('status', 'password-updated');
+    }
+}

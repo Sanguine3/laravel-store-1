@@ -23,11 +23,11 @@ services:
             - sail
         depends_on:
             - mysql
-            - redis
+
     redis:
         image: 'redis:alpine'
         ports:
-            - '${FORWARD_REDIS_PORT:-6379}:6379'
+            - '6379:6379'
         volumes:
             - 'sail-redis:/data'
         networks:
@@ -36,6 +36,7 @@ services:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3
             timeout: 5s
+
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -60,9 +61,13 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+
 networks:
     sail:
         driver: bridge
+
 volumes:
     sail-mysql:
+        driver: local
+    sail-redis:
         driver: local

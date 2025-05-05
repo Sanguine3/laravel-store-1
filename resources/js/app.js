@@ -1,8 +1,6 @@
-import '../../vendor/livewire/flux/dist/flux-lite.min.js'; // Changed to flux-lite JS import
+import '../../vendor/livewire/flux/dist/flux-lite.min.js';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
 Alpine.start();
-
-// import '../css/app.css';

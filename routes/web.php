@@ -1,97 +1,73 @@
 <?php
 
-use App\Http\Controllers\Customer\ProductController;
+use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\DashboardController;
-use App\Http\Controllers\Customer\OrderController;
-use App\Livewire\Admin\Categories\CategoryForm;
-use App\Livewire\Admin\Categories\CategoryList;
-use App\Livewire\Admin\Orders\OrderDetail;
-use App\Livewire\Admin\Orders\OrderList;
-use App\Livewire\Admin\Products\ProductForm;
-use App\Livewire\Admin\Products\ProductList;
-use App\Livewire\Admin\Profile\Index as AdminProfileIndex;
-use App\Livewire\Admin\Users\UserForm;
-use App\Livewire\Admin\Users\UserList;
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\Profile;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Settings\PasswordController;
+use App\Http\Controllers\Settings\AppearanceController;
+use App\Http\Controllers\Settings\DeleteUserController;
 
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| General application pages go here.
-| Auth routes are imported from routes/auth.php.
 */
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Changed to use Customer\ProductController@index
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-// Added route for showing a single product
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products', [CustomerProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('products.show');
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Changed to use DashboardController
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Changed to use OrderController
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+    Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders');
 
     // Settings routes
     Route::middleware(['auth'])->group(function () {
         Route::redirect('settings', 'settings/profile');
 
-        Route::get('settings/profile', Profile::class)->name('settings.profile');
-        Route::get('settings/password', Password::class)->name('settings.password');
-        Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+        Route::get('settings/profile', [ProfileController::class, 'edit'])->name('settings.profile');
+        Route::patch('settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update');
+
+        Route::get('settings/password', [PasswordController::class, 'edit'])->name('settings.password');
+        Route::put('settings/password', [PasswordController::class, 'update'])->name('settings.password.update');
+
+        Route::get('settings/appearance', [AppearanceController::class, 'edit'])->name('settings.appearance');
+        Route::delete('settings/delete-account', [DeleteUserController::class, 'destroy'])->name('settings.delete-account');
     });
 
 
     // Admin routes
     Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-        // Changed to use Admin Dashboard Controller
-        Route::get('/', AdminDashboard::class)->name('dashboard');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // Admin Products
-        Route::get('/products', ProductList::class)->name('products');
-
-        Route::get('/products/create', ProductForm::class)->name('products.create');
-
-        Route::get('/products/{id}/edit', ProductForm::class)->name('products.edit');
+        Route::resource('/products', ProductController::class);
 
         // Admin Categories
-        Route::get('/categories', CategoryList::class)->name('categories');
-
-        Route::get('/categories/create', CategoryForm::class)->name('categories.create');
-
-        Route::get('/categories/{id}/edit', CategoryForm::class)->name('categories.edit');
+        Route::resource('/categories', CategoryController::class);
 
         // Admin Orders
-        Route::get('/orders', OrderList::class)->name('orders');
-
-        Route::get('/orders/{id}', OrderDetail::class)->name('orders.show');
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
         // Admin Users
-        Route::get('/users', UserList::class)->name('users');
-
-        Route::get('/users/create', UserForm::class)->name('users.create');
-
-        Route::get('/users/{id}/edit', UserForm::class)->name('users.edit');
-
-        // Admin Profile
-        Route::get('/profile', AdminProfileIndex::class)->name('profile');
+        Route::resource('/users', UserController::class);
     });
 });
 
-// Auth Livewire screens (login, register, etc.)
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; // Auth routes

@@ -1,59 +1,57 @@
 <?php
 
 use App\Http\Controllers\Auth\ConfirmationController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
-// Removed Livewire Auth component imports
 
 /*
 |--------------------------------------------------------------------------
-| Authentication (Blade MVC) Routes
+| Authentication Routes
 |--------------------------------------------------------------------------
-| All authentication screens are served via Blade MVC controllers.
-| Use guest for public, auth for protected.
 */
 
-use App\Livewire\Auth\ConfirmPassword;
-use App\Livewire\Auth\ForgotPassword;
-use App\Livewire\Auth\Login;
-use App\Livewire\Auth\Register;
-use App\Livewire\Auth\ResetPassword;
-use App\Livewire\Auth\VerifyEmail;
-use App\Livewire\Actions\Logout;
+// Controller Imports for Auth Routes
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
+
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', Login::class)
-        ->name('login');
+    // Login Routes
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
 
-    Route::get('register', Register::class)
-        ->name('register');
+    // Registration Routes
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
 
-    Route::get('forgot-password', ForgotPassword::class)
-        ->name('password.request');
+    // Password Reset Link Routes
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-    Route::get('reset-password/{token}', ResetPassword::class)
-        ->name('password.reset');
+    // Password Reset Routes
+    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verify-email', VerifyEmail::class)
-        ->name('verification.notice');
-
-    Route::get('verify-email/{id}/{hash}', VerifyEmail::class)
+    // Email Verification Routes
+    Route::get('verify-email', [VerifyEmailController::class, 'showNotice'])->name('verification.notice');
+    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class) // Uses __invoke
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
-
-    Route::post('email/verification-notification', [VerifyEmail::class, 'sendVerificationNotification'])
+    Route::post('email/verification-notification', [VerifyEmailController::class, 'sendVerificationNotification'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    Route::get('confirm-password', ConfirmPassword::class)
-        ->name('password.confirm');
+    // Password Confirmation Routes
+    Route::get('confirm-password', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+    Route::post('confirm-password', [ConfirmPasswordController::class, 'confirm'])->name('password.confirm.post');
 });
 
-Route::post('logout', Logout::class)
-    ->name('logout');
+// Logout Route
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
