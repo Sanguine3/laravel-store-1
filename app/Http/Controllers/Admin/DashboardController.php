@@ -18,8 +18,8 @@ class DashboardController extends Controller
     {
         $stats = [
             'totalOrders' => Order::count(),
-            'pendingOrders' => Order::where('status', 'pending')->count(), // Adjust status as needed
-            'totalCustomers' => User::where('role', 'customer')->count(), // Assuming 'customer' role exists
+            'pendingOrders' => Order::where('status', 'pending')->count(),
+            'totalCustomers' => User::where('role', 'customer')->count(),
             'totalProducts' => Product::count(),
             'recentOrders' => Order::with('user')->latest()->take(5)->get(),
         ];

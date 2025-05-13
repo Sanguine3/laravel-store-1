@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, MustVerifyEmailTrait;
+    use HasFactory, Notifiable, MustVerifyEmailTrait, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -30,7 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /* --------------------------------
      |  Convenience helpers
      |--------------------------------*/
-    public function isAdmin(): bool    { return $this->role === 'admin'; }
+    public function isAdmin(): bool { return $this->role === 'admin'; }
     public function isCustomer(): bool { return $this->role === 'customer'; }
 
     /**

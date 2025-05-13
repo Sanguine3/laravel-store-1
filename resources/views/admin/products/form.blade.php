@@ -42,7 +42,6 @@
                             </div>
 
                             <div class="flex flex-col space-y-2">
-                                <label for="description" class="text-sm font-medium text-zinc-900 dark:text-white">Description</label>
                                 <flux:textarea
                                     name="description"
                                     id="description"
@@ -75,7 +74,7 @@
                         <div class="md:col-span-1 space-y-6">
                             <div class="flex flex-col space-y-2">
                                 <label for="image_url" class="text-sm font-medium text-zinc-900 dark:text-white">Product Image URL</label>
-                                <input name="image_url" id="image_url" placeholder="Paste image URL..." value="{{ old('image_url', $product->image ?? '') }}" class="block w-full p-2 border border-zinc-200 dark:border-zinc-700 rounded-md focus:ring-0 focus:border-zinc-300" /> {{-- Use image field from DB --}}
+                                <input name="image" id="image" placeholder="Paste image URL..." value="{{ old('image', $product->image ?? '') }}" class="block w-full p-2 border border-zinc-200 dark:border-zinc-700 rounded-md focus:ring-0 focus:border-zinc-300" />
                                 @if(isset($product) && $product->image)
                                     <img src="{{ $product->image }}" alt="Preview" class="mt-2 h-24 w-24 object-cover rounded border border-zinc-200 dark:border-zinc-700" />
                                 @endif
@@ -85,28 +84,36 @@
                             </div>
 
                             <!-- Category Dropdown with AlpineJS -->
-                            <div class="flex flex-col space-y-2" x-data="{ openCategory: false, selectedCategory: '{{ old('category_id', $product->category_id ?? '') }}' }">
+                            <div class="flex flex-col space-y-2" x-data="{
+                                open: false,
+                                selectedCategory: '{{ old('category_id', $product->category_id ?? '') }}',
+                                categoriesMap: {{ Js::from($categories->keyBy('id')->map->name->all() + ['' => 'Select Category']) }}
+                            }" @click.outside="open = false">
                                 <label for="category-button" class="text-sm font-medium text-zinc-900 dark:text-white">Category</label>
                                 <input type="hidden" name="category_id" id="category_id" x-model="selectedCategory">
-                                <div class="relative">
-                                    <flux:button id="category-button" type="button" icon:trailing="chevron-down" class="w-full flex justify-between" @click="openCategory = !openCategory">
-                                        <span x-text="$refs.categoryName{{ old('category_id', $product->category_id ?? 'none') }}.textContent.trim()">
-                                            {{ $categories->firstWhere('id', old('category_id', $product->category_id ?? ''))?->name ?? 'Select Category' }}
-                                        </span>
-                                        <span x-ref="categoryNamenone" style="display: none;">Select Category</span> {{-- Hidden ref for default text --}}
-                                    </flux:button>
-                                    <div x-show="openCategory" @click.away="openCategory = false" class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600 max-h-60 overflow-y-auto" style="display: none;">
-                                        <flux:menu>
-                                            <flux:menu.item @click="selectedCategory = ''; openCategory = false">
-                                                <span x-ref="categoryName">Select Category</span>
-                                            </flux:menu.item>
-                                            @foreach($categories as $category)
-                                                <flux:menu.item @click="selectedCategory = '{{ $category->id }}'; openCategory = false">
-                                                    <span x-ref="categoryName{{ $category->id }}">{{ $category->name }}</span>
-                                                </flux:menu.item>
-                                            @endforeach
-                                        </flux:menu>
-                                    </div>
+                                <div class="relative text-sm">
+                                    <button @click="open = !open" type="button" id="category-button" class="w-full flex items-center justify-between px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm bg-white dark:bg-zinc-700 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <span x-text="categoriesMap[selectedCategory] || 'Select Category'"></span>
+                                        <svg class="ml-2 -mr-0.5 h-4 w-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                    <ul x-show="open"
+                                        x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600 max-h-60 overflow-y-auto py-1"
+                                        x-cloak>
+                                        <li @click="selectedCategory = ''; open = false" class="px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600 cursor-pointer">
+                                            Select Category
+                                        </li>
+                                        @foreach($categories as $category)
+                                            <li @click="selectedCategory = '{{ $category->id }}'; open = false" class="px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600 cursor-pointer">
+                                                {{ $category->name }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                                 @error('category_id')
                                     <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

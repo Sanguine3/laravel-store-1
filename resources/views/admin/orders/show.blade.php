@@ -34,26 +34,24 @@
         <!-- Order Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Order #{{ $order->id }}</h1>
+                <p class="text-sm font-bold text-zinc-900 dark:text-white">{{ $order->order_number }}</p>
                 <p class="text-sm text-zinc-500 dark:text-zinc-400">
                     Placed on {{ $order->created_at->format('M d, Y') }} at {{ $order->created_at->format('g:i A') }}
                 </p>
             </div>
 
             <!-- Status Update Form -->
-            <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}" class="flex items-center gap-2"> {{-- Assuming a route named 'admin.orders.updateStatus' --}}
+            <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}" class="flex items-center gap-2">
                 @csrf
-                @method('PUT') {{-- Or PATCH --}}
+                @method('PUT')
                 <flux:select name="status" id="status">
-                    @php
-                        // Define statuses here or pass from controller
-                        $statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
-                    @endphp
                     @foreach($statuses as $statusOption)
                         <option value="{{ $statusOption }}" @if($order->status === $statusOption) selected @endif>{{ ucfirst($statusOption) }}</option>
                     @endforeach
                 </flux:select>
-
+                @error('status') {{-- Display validation error for status --}}
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @enderror
                 <flux:button type="submit" variant="primary">Update Status</flux:button>
             </form>
         </div>
@@ -82,7 +80,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                                             <div class="flex items-center gap-3">
                                                 <div class="flex-shrink-0 h-10 w-10 rounded-md overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                                                    <img class="h-full w-full object-cover" src="{{ $item->product?->image_path ?? 'https://via.placeholder.com/100' }}" alt="{{ $item->product?->name }}">
+                                                    <img class="h-full w-full object-cover" src="{{ $item->product?->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $item->product?->name }}">
                                                 </div>
                                                 <div class="flex flex-col">
                                                     <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $item->product?->name ?? 'Product Not Found' }}</span>
@@ -157,11 +155,7 @@
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Shipping Address</h2>
                     </div>
                      <div class="p-6 text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
-                        <p class="font-medium text-zinc-900 dark:text-white">{{ $order->shipping_address_name ?? ($order->user?->name ?? 'N/A') }}</p>
-                        <p>{{ $order->shipping_address_line1 ?? 'N/A' }}</p>
-                        @if($order->shipping_address_line2)<p>{{ $order->shipping_address_line2 }}</p>@endif
-                        <p>{{ $order->shipping_city }}, {{ $order->shipping_state }} {{ $order->shipping_zip }}</p>
-                        <p>{{ $order->shipping_country }}</p>
+                        <p>{{ $order->shipping_address ?? 'N/A' }}</p>
                     </div>
                 </x-card>
 
@@ -171,11 +165,7 @@
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Billing Address</h2>
                     </div>
                      <div class="p-6 text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
-                        <p class="font-medium text-zinc-900 dark:text-white">{{ $order->billing_address_name ?? ($order->user?->name ?? 'N/A') }}</p>
-                        <p>{{ $order->billing_address_line1 ?? 'N/A' }}</p>
-                        @if($order->billing_address_line2)<p>{{ $order->billing_address_line2 }}</p>@endif
-                        <p>{{ $order->billing_city }}, {{ $order->billing_state }} {{ $order->billing_zip }}</p>
-                        <p>{{ $order->billing_country }}</p>
+                        <p>{{ $order->billing_address ?? 'N/A' }}</p>
                     </div>
                 </x-card>
 
@@ -191,6 +181,17 @@
                 </x-card>
             </div>
         </div>
+
+
+                <!-- Note -->
+                 <x-card>
+                    <div class="p-6 border-b border-zinc-200 dark:border-zinc-700">
+                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Note</h2>
+                    </div>
+                     <div class="p-6 text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+                        <p>{{ $order->note ?? 'No note provided.' }}</p>
+                    </div>
+                </x-card>
 
 
         <!-- Back Button -->

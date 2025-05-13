@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -18,6 +19,7 @@ class UserController extends Controller
         $roleFilter = $request->input('role'); // Use 'role' as query param
 
         $users = User::query()
+            ->withTrashed() // Include soft-deleted users
             ->when($search, fn ($query, $search) =>
                 $query->where(fn($q) => // Group where clauses
                     $q->where('name', 'like', '%' . $search . '%')
@@ -100,10 +102,9 @@ class UserController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->ignore($userId)],
+            'email' => ['required', 'string', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->ignore($userId)->whereNull('deleted_at')],
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', \Illuminate\Validation\Rule::in(['admin', 'customer'])],
-            // Add status validation if a status field exists and is needed
             // 'status' => ['required', 'string', \Illuminate\Validation\Rule::in(['active', 'inactive'])],
         ];
 
@@ -114,17 +115,32 @@ class UserController extends Controller
      */
     public function destroy(User $user) // Using route model binding
     {
-        // Add checks here if needed (e.g., prevent deleting self, prevent deleting last admin)
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
              return redirect()->route('admin.users.index')->with('error', 'You cannot delete yourself.');
         }
 
-        // Example: Prevent deleting the last admin (assuming 'admin' role)
-        // if ($user->role === 'admin' && User::where('role', 'admin')->count() <= 1) {
-        //     return redirect()->route('admin.users.index')->with('error', 'Cannot delete the last admin user.');
-        // }
+        if ($user->role === 'admin' && User::where('role', 'admin')->count() <= 1) {
+             return redirect()->route('admin.users.index')->with('error', 'Cannot delete the last admin user.');
+        }
 
         $user->delete();
         return redirect()->route('admin.users.index')->with('status', 'User deleted successfully.');
+    }
+
+    /**
+     * Restore the specified soft-deleted user.
+     */
+    public function restore(User $user): \Illuminate\Http\RedirectResponse
+    {
+        // Route model binding automatically handles finding the user,
+        // including trashed ones if the route parameter is type-hinted
+        // and the model uses SoftDeletes.
+
+        if ($user->trashed()) {
+            $user->restore();
+            return redirect()->route('admin.users.index')->with('status', 'User restored successfully.');
+        }
+
+        return redirect()->route('admin.users.index')->with('error', 'User is not deleted or cannot be restored.');
     }
 }

@@ -28,19 +28,6 @@
                             {{ isset($category) ? __('Update category information') : __('Add a new category to your store') }}
                         </p>
                     </div>
-                    @if(isset($category))
-                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category? This action cannot be undone.');">
-                            @csrf
-                            @method('DELETE')
-                            <button
-                                type="submit"
-                                class="text-red-600 hover:text-red-800 flex items-center space-x-1"
-                            >
-                                <i class="fas fa-trash-alt"></i>
-                                <span>Delete</span>
-                            </button>
-                        </form>
-                    @endif
                 </div>
 
                 <div class="p-6 space-y-6">

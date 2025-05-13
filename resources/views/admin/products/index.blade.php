@@ -6,10 +6,10 @@
     @endif
     <div class="flex flex-col gap-6">
         <!-- Search and Filters Form -->
-        <form method="GET" action="{{ route('admin.products.index') }}" class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <form method="GET" action="{{ route('admin.products.index') }}" class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4" x-data="{ searchTerm: '{{ $search ?? '' }}' }">
             <div class="flex flex-row gap-2 sm:flex-row flex-1 items-stretch sm:items-end">
                 <!-- Search Input -->
-                <div class="flex-[2_2_0%] min-w-0">
+                <div class="flex-[2_2_0%] min-w-0 relative">
                     <label for="product-search" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Search</label>
                     <flux:input
                         name="search"
@@ -19,53 +19,65 @@
                         clearable
                         class="w-full min-w-0"
                         value="{{ $search ?? '' }}"
+                        x-model="searchTerm"
                     />
+                    <span x-show="searchTerm.length > 0" x-cloak class="absolute right-10 top-1/2 mt-2.5 -translate-y-1/2 text-xs text-zinc-500 dark:text-zinc-400 pr-2" x-text="searchTerm.length"></span>
                 </div>
                 <!-- Category Filter -->
-                <div class="flex-1 min-w-0" x-data="{ openCategory: false, selectedCategory: '{{ $categoryFilter ?? '' }}' }">
+                <div class="flex-1 min-w-0" x-data="{ openCategoryFilter: false, selectedCategoryFilter: '{{ $categoryFilter ?? '' }}', categoriesMap: {{ Js::from($categories->pluck('name', 'id')) }} }">
                     <label for="category-filter-button" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Category</label>
-                    <input type="hidden" name="category" x-model="selectedCategory">
+                    <input type="hidden" name="category" x-model="selectedCategoryFilter">
                     <div class="relative">
-                        <flux:button id="category-filter-button" icon:trailing="chevron-down" class="w-full flex justify-between" @click="openCategory = !openCategory">
-                            <span x-text="$refs.categoryName{{ $categoryFilter ?? 'all' }}.textContent.trim()">{{ $categories->firstWhere('id', $categoryFilter)?->name ?? 'All Categories' }}</span>
-                        </flux:button>
-                        <div x-show="openCategory" @click.away="openCategory = false" class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600" style="display: none;">
-                            <flux:menu>
-                                <flux:menu.item @click="selectedCategory = ''; openCategory = false">
-                                    <span x-ref="categoryNameall">All Categories</span>
-                                </flux:menu.item>
-                                @foreach($categories as $category)
-                                    <flux:menu.item @click="selectedCategory = '{{ $category->id }}'; openCategory = false">
-                                        <span x-ref="categoryName{{ $category->id }}">{{ $category->name }}</span>
-                                    </flux:menu.item>
-                                @endforeach
-                            </flux:menu>
+                        <button @click="openCategoryFilter = !openCategoryFilter" type="button" id="category-filter-button" class="w-full flex items-center justify-between px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm bg-white dark:bg-zinc-700 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <span x-text="selectedCategoryFilter === '' ? 'All Categories' : (categoriesMap[selectedCategoryFilter] || 'All Categories')">
+                                {{ $categories->firstWhere('id', $categoryFilter)?->name ?? 'All Categories' }}
+                            </span>
+                            <svg class="ml-2 -mr-0.5 h-4 w-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div x-show="openCategoryFilter" @click.away="openCategoryFilter = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600 max-h-60 overflow-y-auto py-1" style="display: none;">
+                            <a href="#" @click.prevent="selectedCategoryFilter = ''; openCategoryFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">All Categories</a>
+                            @foreach($categories as $category)
+                                <a href="#" @click.prevent="selectedCategoryFilter = '{{ $category->id }}'; openCategoryFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">{{ $category->name }}</a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
                 <!-- Status Filter -->
-                <div class="flex-1 min-w-0" x-data="{ openStatus: false, selectedStatus: '{{ $statusFilter ?? '' }}' }">
+                <div class="flex-1 min-w-0" x-data="{ openStatusFilter: false, selectedStatusFilter: '{{ $statusFilter ?? '' }}' }">
                      <label for="status-filter-button" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Status</label>
-                     <input type="hidden" name="status" x-model="selectedStatus">
+                     <input type="hidden" name="status" x-model="selectedStatusFilter">
                      <div class="relative">
-                        <flux:button id="status-filter-button" icon:trailing="chevron-down" color="outline" class="w-full flex justify-between" @click="openStatus = !openStatus">
-                             <span x-text="selectedStatus === '' ? 'All Status' : (selectedStatus === 'published' ? 'Published' : 'Draft')">
+                        <button @click="openStatusFilter = !openStatusFilter" type="button" id="status-filter-button" class="w-full flex items-center justify-between px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm bg-white dark:bg-zinc-700 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                             <span x-text="selectedStatusFilter === '' ? 'All Status' : (selectedStatusFilter === 'published' ? 'Published' : 'Draft')">
                                 {{ $statusFilter === '' ? 'All Status' : ($statusFilter === 'published' ? 'Published' : 'Draft') }}
                              </span>
-                        </flux:button>
-                        <div x-show="openStatus" @click.away="openStatus = false" class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600" style="display: none;">
-                            <flux:menu>
-                                <flux:menu.item @click="selectedStatus = ''; openStatus = false">All Status</flux:menu.item>
-                                <flux:menu.item @click="selectedStatus = 'published'; openStatus = false">Published</flux:menu.item>
-                                <flux:menu.item @click="selectedStatus = 'draft'; openStatus = false">Draft</flux:menu.item>
-                            </flux:menu>
+                             <svg class="ml-2 -mr-0.5 h-4 w-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div x-show="openStatusFilter" @click.away="openStatusFilter = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600 max-h-60 overflow-y-auto py-1" style="display: none;">
+                            <a href="#" @click.prevent="selectedStatusFilter = ''; openStatusFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">All Status</a>
+                            <a href="#" @click.prevent="selectedStatusFilter = 'published'; openStatusFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">Published</a>
+                            <a href="#" @click.prevent="selectedStatusFilter = 'draft'; openStatusFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">Draft</a>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Apply Filters Button -->
             <div class="flex items-stretch sm:items-end gap-2 w-full sm:w-auto">
-                 <flux:button type="submit" color="primary" class="w-full sm:w-auto">Apply Filters</flux:button>
+                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus:ring-blue-600">Apply Filters</button>
             </div>
         </form>
 
@@ -94,7 +106,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                                 <div class="flex items-center gap-3">
                                     <div class="flex-shrink-0 h-10 w-10 rounded-md overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                                        <img class="h-full w-full object-cover" src="{{ $product->image_url ?? 'https://via.placeholder.com/100' }}" alt="{{ $product->name }}"> {{-- Assuming image_url field --}}
+                                        <img class="h-full w-full object-cover" src="{{ $product->image ?? 'https://via.placeholder.com/100' }}" alt="{{ $product->name }}"> {{-- Using 'image' field from DB --}}
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ $product->name }}</span>

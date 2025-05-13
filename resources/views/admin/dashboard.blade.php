@@ -108,15 +108,18 @@
                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">{{ $order->id }}</td>
                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $order->user?->name ?? 'N/A' }}</td>
                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $order->created_at->format('M d, Y') }}</td>
-                               <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                   <flux:badge size="sm" inset="top bottom" @class="[
-                                       'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' => $order->status === 'completed',
-                                       'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400' => $order->status === 'processing' || $order->status === 'pending',
-                                       'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' => $order->status === 'cancelled',
-                                       'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-400' => !in_array($order->status, ['completed', 'processing', 'pending', 'cancelled'])
-                                   ]">
-                                       {{ ucfirst($order->status) }}
-                                   </flux:badge>
+                               <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                   @php
+                                       $statusClasses = [
+                                           'completed' => 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
+                                           'shipped' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400',
+                                           'processing' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400',
+                                           'pending' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400',
+                                           'cancelled' => 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400',
+                                       ];
+                                       $statusClass = $statusClasses[$order->status] ?? 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-400';
+                                   @endphp
+                                   <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {{ $statusClass }}">{{ ucfirst($order->status) }}</span>
                                </td>
                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">${{ number_format($order->total_amount, 2) }}</td>
                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

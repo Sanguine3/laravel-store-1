@@ -9,7 +9,6 @@
                 <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
                 <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
             </flux:radio.group>
-            {{-- No form or submit button needed --}}
         </x-settings.layout>
     </section>
 </x-layouts.app> {{-- Close main app layout wrapper --}}

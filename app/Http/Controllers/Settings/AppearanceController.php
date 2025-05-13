@@ -14,9 +14,6 @@ class AppearanceController extends Controller
      */
     public function edit()
     {
-        // We might need to pass current settings (e.g., theme) to the view
-        return view('settings.appearance'); // Placeholder, view needs creation
+        return view('settings.appearance');
     }
-
-    // Update method removed as appearance is handled client-side by Flux/Alpine
 }

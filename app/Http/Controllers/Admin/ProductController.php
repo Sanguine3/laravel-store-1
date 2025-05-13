@@ -76,7 +76,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product) // Using route model binding
     {
-        $categories = Category::query()->orderBy('name')->get();
+        $categories = Category::orderBy('name', 'desc')->get();
         return view('admin.products.form', compact('product', 'categories'));
     }
 
@@ -115,20 +115,12 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'image_url' => ['nullable', 'url', 'max:2048'], // Validate the URL input
+            'image' => ['nullable', 'url', 'max:2048'], // Validate the URL input
             'category_id' => ['required', 'exists:categories,id'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'is_published' => ['nullable'], // Checkbox presence handled in store/update
-            // Add other rules like SKU if needed
             // 'sku' => ['nullable', 'string', 'unique:products,sku,' . ($product ? $product->id : null)],
         ];
-
-        // Add specific rules if needed (e.g., unique SKU check)
-        // if ($product) {
-        //     // Rules specific to updating
-        // } else {
-        //     // Rules specific to creating
-        // }
 
         return $request->validate($rules);
     }

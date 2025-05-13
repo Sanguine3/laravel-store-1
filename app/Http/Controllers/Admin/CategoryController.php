@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $sortDirection = $request->input('direction', 'asc'); // Default sort direction
 
         // Validate sort field to prevent arbitrary column sorting
-        $validSortFields = ['name', 'slug', 'created_at']; // Add other sortable fields if needed
+        $validSortFields = ['name', 'slug', 'created_at'];
         if (!in_array($sortField, $validSortFields)) {
             $sortField = 'name';
         }
@@ -39,7 +39,7 @@ class CategoryController extends Controller
                 )
             )
             ->orderBy($sortField, $sortDirection)
-            ->paginate(15) // Adjust pagination count as needed
+            ->paginate(15)
             ->withQueryString(); // Append query string parameters
 
         return view('admin.categories.index', compact('categories', 'search', 'sortField', 'sortDirection'));
@@ -97,10 +97,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): RedirectResponse // Using route model binding
     {
-        // Optional: Add check if category has products before deleting
-        // if ($category->products()->count() > 0) {
-        //     return redirect()->route('admin.categories.index')->with('error', 'Cannot delete category with associated products.');
-        // }
+        if ($category->products()->count() > 0) {
+             return redirect()->route('admin.categories.index')->with('error', 'Cannot delete category with associated products.');
+        }
         $category->delete();
         return redirect()->route('admin.categories.index')->with('status', 'Category deleted successfully.');
     }

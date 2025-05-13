@@ -13,7 +13,7 @@
         <!-- Header with Actions -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <!-- Search Form -->
-            <form method="GET" action="{{ route('admin.categories.index') }}" class="flex-1">
+            <form method="GET" action="{{ route('admin.categories.index') }}" class="flex-1" x-data="{ searchTerm: '{{ $search ?? '' }}' }">
                  <!-- Keep existing sort parameters if any -->
                  @if(request('sort_by'))
                      <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
@@ -21,17 +21,19 @@
                  @if(request('direction'))
                      <input type="hidden" name="direction" value="{{ request('direction') }}">
                  @endif
-                <flux:input
-                    name="search"
-                    id="category-search"
-                    placeholder="Search categories..."
-                    icon="magnifying-glass"
-                    clearable
-                    class="w-full"
-                    value="{{ $search ?? '' }}"
-                />
-                <!-- Optionally add a submit button if clearable doesn't trigger form submit -->
-                <!-- <flux:button type="submit">Search</flux:button> -->
+                <div class="relative">
+                    <flux:input
+                        name="search"
+                        id="category-search"
+                        placeholder="Search categories..."
+                        icon="magnifying-glass"
+                        clearable
+                        class="w-full"
+                        value="{{ $search ?? '' }}"
+                        x-model="searchTerm"
+                    />
+                    <span x-show="searchTerm.length > 0" x-cloak class="absolute right-10 top-1/2 -translate-y-1/2 text-xs text-zinc-500 dark:text-zinc-400 pr-2" x-text="searchTerm.length"></span>
+                </div>
             </form>
             <flux:button href="{{ route('admin.categories.create') }}" color="warning" icon="plus" size="base" class="!bg-amber-700 !text-white !shadow-lg !ring-0 !outline-none hover:!bg-amber-800 focus:!ring-0 focus:!outline-none">
                 Add New Category
@@ -65,12 +67,16 @@
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($categories as $category)
-                        <tr>
+                        <tr x-data="{ expanded: false }">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                                 {{ $category->name }}
                             </td>
-                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400"> {{-- Dark text for description --}}
-                                {{ \Illuminate\Support\Str::limit($category->description, 50) }} {{-- Limit description length --}}
+                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
+                                <span x-show="!expanded">{{ \Illuminate\Support\Str::limit($category->description, 50) }}</span>
+                                <span x-show="expanded" x-cloak>{{ $category->description }}</span>
+                                @if(strlen($category->description) > 50)
+                                    <button @click="expanded = !expanded" class="ml-2 text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none" x-text="expanded ? 'Show less' : 'Show more'"></button>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-sm text-zinc-900 dark:text-white">{{ $category->products_count ?? 0 }}</span>

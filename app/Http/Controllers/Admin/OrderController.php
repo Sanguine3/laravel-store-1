@@ -17,8 +17,7 @@ class OrderController extends Controller
         $search = $request->input('search');
         $statusFilter = $request->input('status');
 
-        $orders = Order::query()
-            ->with('user') // Eager load user relationship
+        $orders = Order::with('user') // Eager load user relationship //dung 2 where toi uu, bo when
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('id', 'like', '%' . $search . '%') // Search by Order ID
@@ -48,7 +47,7 @@ class OrderController extends Controller
         $order->load(['orderItems.product', 'user']);
 
         // Define possible statuses for the update dropdown
-        $statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled']; // Or fetch from a config/enum
+        $statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
 
         return view('admin.orders.show', compact('order', 'statuses'));
     }

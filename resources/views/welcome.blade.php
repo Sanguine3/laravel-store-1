@@ -6,6 +6,10 @@
 
         <title>Laravel</title>
 
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -19,33 +23,49 @@
     <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
         <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
             @if (Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @auth
-                        <a
-                            href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
-                        >
-                            Dashboard
-                        </a>
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            {{-- Added button styling --}}
-                            class="inline-block rounded-md bg-zinc-900 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:focus-visible:outline-zinc-600"
-                        >
-                            Log in
-                        </a>
-
-                        @if (Route::has('register'))
+                <nav class="flex items-center justify-between gap-4">
+                    {{-- View Products Button for Guests --}}
+                    <a href="{{ route('products.index') }}"
+                       class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                    >
+                        <flux:icon name="layout-grid" class="h-5 w-5 inline-block" />
+                        <span>View Products</span>
+                    </a>
+                    <div class="flex items-center gap-4">
+                        @auth
+                            @if(Auth::user()->isAdmin())
+                                <a
+                                    href="{{ route('admin.dashboard') }}"
+                                    class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
+                               >
+                                   Admin Dashboard
+                               </a>
+                            @else
+                                <a
+                                    href="{{ route('dashboard') }}"
+                                    class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
+                               >
+                                   Dashboard
+                               </a>
+                            @endif
+                        @else
                             <a
-                                href="{{ route('register') }}"
-                                {{-- Added button styling --}}
-                                class="inline-block rounded-md bg-zinc-900 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:focus-visible:outline-zinc-600">
-                                Register
+                                href="{{ route('login') }}"
+                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                            >
+                                Log in
                             </a>
-                        @endif
-                    @endauth
-                </nav>
+
+                            @if (Route::has('register'))
+                                <a
+                                    href="{{ route('register') }}"
+                                    class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                    Register
+                                </a>
+                            @endif
+                        @endauth
+                        </div>
+                    </nav>
             @endif
         </header>
         <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">

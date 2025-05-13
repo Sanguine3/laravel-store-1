@@ -67,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Admin Users
         Route::resource('/users', UserController::class);
+        Route::put('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
     });
 });
 

@@ -48,10 +48,6 @@
                             {{-- Added mt-auto to push button down --}}
                             <div class="pt-4 mt-auto">
                                 {{-- Add to Cart form/logic would go here --}}
-                                {{-- Example: Wrap button and quantity in a form --}}
-                                {{-- <form method="POST" action="{{ route('cart.add', $product) }}"> --}}
-                                {{-- @csrf --}}
-                              {{-- Enhanced Quantity Input and Add to Cart Button --}}
                               <div class="flex items-center gap-4">
                                   {{-- Quantity Input Group --}}
                                   <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden shadow-sm">

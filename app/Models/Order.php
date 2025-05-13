@@ -10,12 +10,16 @@ class Order extends Model
 {
     use HasFactory;
 
-    // You may adjust these attributes if you have additional order properties like 'status' or 'total_amount'.
     protected $fillable = [
         'user_id',
         'status',
         'total_amount',
         'order_number',
+        'shipping_address',
+        'billing_address',
+        'payment_method',
+        'payment_status',
+        'note',
     ];
 
     /**
