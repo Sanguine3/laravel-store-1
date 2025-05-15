@@ -35,15 +35,9 @@ class ForgotPasswordController extends Controller
         $status = Password::sendResetLink($request->only('email'));
 
         // 3. Check the status and redirect
-        // Using the generic message from the original Livewire component
-        // You might want to customize messages based on $status (Password::RESET_LINK_SENT, etc.)
-        return back()->with('status', __('A reset link will be sent if the account exists.'));
-
-        /* Alternative based on status:
         return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
+                    ? back()->with('status', __($status)) // This will show "passwords.sent" (e.g., "We have emailed your password reset link!")
                     : back()->withInput($request->only('email'))
-                            ->withErrors(['email' => __($status)]);
-        */
+                            ->withErrors(['email' => __($status)]); // This will show "passwords.user" (e.g., "We can't find a user with that email address.") or "passwords.throttled"
     }
 }

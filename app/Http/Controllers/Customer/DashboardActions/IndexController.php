@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Customer\DashboardActions;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order; // Added
-use App\Models\Product; // Added
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Added
+use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class DashboardController extends Controller
+class IndexController extends Controller
 {
     /**
+     * Handle the incoming request.
      * Display the customer dashboard.
      */
-    public function index(): View
+    public function __invoke(): View
     {
         // Get total product count (all statuses)
         $totalProducts = Product::query()->count();

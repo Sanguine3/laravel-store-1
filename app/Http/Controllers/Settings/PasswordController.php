@@ -3,17 +3,21 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password as PasswordRule;
-use Illuminate\Support\Facades\Auth; // Keep Auth facade for consistency or use $request->user()
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+
+// Keep Auth facade for consistency or use $request->user()
 
 class PasswordController extends Controller
 {
     /**
      * Show the form for editing the user's password.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit()
     {
@@ -23,8 +27,8 @@ class PasswordController extends Controller
     /**
      * Update the user's password.
      *
-     * @param  \Illuminate\Http\Request  $request // We'll likely create a FormRequest later
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function update(Request $request)
     {

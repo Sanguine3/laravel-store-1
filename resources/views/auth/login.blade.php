@@ -78,7 +78,7 @@
             <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
                 {{ __('Don\'t have an account?') }}
                 {{-- Keep standard link, no wire:navigate --}}
-                <flux:link :href="route('register')">{{ __('Sign up') }}</flux:link>
+                <flux:link :href="route('register.form')">{{ __('Sign up') }}</flux:link>
             </div>
         @endif
     </div>

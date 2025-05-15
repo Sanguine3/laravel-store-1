@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -10,25 +11,25 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
     /**
      * Display the login view.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function showLoginForm()
     {
-        // We will return the view('auth.login') here later
-        return view('auth.login'); // Placeholder, view needs creation
+        return view('auth.login');
     }
 
     /**
      * Handle an incoming authentication request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function login(Request $request)
     {
@@ -42,7 +43,7 @@ class LoginController extends Controller
         $this->ensureIsNotRateLimited($request);
 
         // 3. Attempt authentication
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             // Hit rate limiter on failed attempt
             RateLimiter::hit($this->throttleKey($request));
 
@@ -62,7 +63,7 @@ class LoginController extends Controller
         if ($user && $user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard', absolute: false));
         }
-        if ($user && $user->isCustomer()){
+        if ($user && $user->isCustomer()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
     }
@@ -70,14 +71,14 @@ class LoginController extends Controller
     /**
      * Ensure the authentication request is not rate limited.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return void
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function ensureIsNotRateLimited(Request $request): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
         }
 
@@ -96,19 +97,19 @@ class LoginController extends Controller
     /**
      * Get the authentication rate limiting throttle key.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return string
      */
     protected function throttleKey(Request $request): string
     {
-        return Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
+        return Str::transliterate(Str::lower($request->input('email')) . '|' . $request->ip());
     }
 
     /**
      * Log the user out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function logout(Request $request)
     {

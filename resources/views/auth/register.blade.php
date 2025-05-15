@@ -88,7 +88,7 @@
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
             {{ __('Already have an account?') }}
             {{-- Remove wire:navigate --}}
-            <flux:link :href="route('login')">{{ __('Log in') }}</flux:link>
+            <flux:link :href="route('login.form')">{{ __('Log in') }}</flux:link>
         </div>
     </div>
 </x-layouts.auth>

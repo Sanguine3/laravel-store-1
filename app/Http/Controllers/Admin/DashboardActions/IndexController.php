@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\DashboardActions;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class DashboardController extends Controller
+class IndexController extends Controller
 {
     /**
+     * Handle the incoming request.
      * Display the admin dashboard.
      */
-    public function index(): View
+    public function __invoke(): View
     {
         $stats = [
             'totalOrders' => Order::count(),

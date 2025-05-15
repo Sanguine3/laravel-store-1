@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\ConfirmationController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegistrationController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 // Controller Imports for Auth Routes
 use App\Http\Controllers\Auth\LoginController;
@@ -11,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,12 +17,12 @@ use App\Http\Controllers\Auth\ConfirmPasswordController;
 
 Route::middleware('guest')->group(function () {
     // Login Routes
-    Route::get('login', [LoginController::class, 'showLoginForm']);
-    Route::post('post-login', [LoginController::class, 'login'])->name('login');
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login.form');
+    Route::post('login', [LoginController::class, 'login'])->name('login');
 
     // Registration Routes
-    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [RegisterController::class, 'register']);
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
+    Route::post('register', [RegisterController::class, 'register'])->name('register');
 
     // Password Reset Link Routes
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
