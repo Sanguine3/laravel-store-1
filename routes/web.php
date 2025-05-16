@@ -27,6 +27,15 @@ use App\Http\Controllers\Admin\UserActions\DestroyController as UserDestroyContr
 use App\Http\Controllers\Admin\UserActions\RestoreController as UserRestoreController;
 use App\Http\Controllers\Customer\DashboardActions\IndexController as CustomerDashboardIndexController;
 use App\Http\Controllers\Customer\OrderActions\IndexController as CustomerOrderIndexController;
+use App\Http\Controllers\Customer\OrderActions\ShowController as CustomerOrderShowController;
+
+// Added
+use App\Http\Controllers\Customer\CartActions\AddController as CartAddController;
+use App\Http\Controllers\Customer\CartActions\ViewController as CartViewController;
+use App\Http\Controllers\Customer\CartActions\UpdateController as CartUpdateController;
+use App\Http\Controllers\Customer\CartActions\RemoveController as CartRemoveController;
+use App\Http\Controllers\Customer\CheckoutActions\ShowFormController as CheckoutShowFormController;
+use App\Http\Controllers\Customer\CheckoutActions\ProcessController as CheckoutProcessController;
 use App\Http\Controllers\Settings\ProfileActions\EditController as ProfileEditController;
 use App\Http\Controllers\Settings\ProfileActions\UpdateController as ProfileUpdateController;
 use App\Http\Controllers\Settings\PasswordController;
@@ -45,6 +54,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+//Product routes
 Route::get('/products', CustomerProductIndexController::class)->name('products.index');
 Route::get('/products/{product}', CustomerProductShowController::class)->name('products.show');
 
@@ -53,7 +63,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', CustomerDashboardIndexController::class)
         ->name('dashboard');
 
+    // Order routes
     Route::get('/orders', CustomerOrderIndexController::class)->name('orders');
+    Route::get('/orders/{order}', CustomerOrderShowController::class)->name('orders.show');
+
+    // Cart routes
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::post('/add/{product}', CartAddController::class)->name('add');
+        Route::get('/', CartViewController::class)->name('view');
+        Route::patch('/update/{productId}', CartUpdateController::class)->name('update');
+        Route::delete('/remove/{productId}', CartRemoveController::class)->name('remove');
+    });
+
+    // Checkout routes
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', CheckoutShowFormController::class)->name('show');
+        Route::post('/', CheckoutProcessController::class)->name('process');
+    });
 
     // Settings routes
     Route::middleware(['auth'])->group(function () {
@@ -106,4 +132,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/auth.php'; // Auth routes
+require __DIR__ . '/auth.php'; // Auth routes

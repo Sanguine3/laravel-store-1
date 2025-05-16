@@ -47,32 +47,41 @@
                             </div>
                             {{-- Added mt-auto to push button down --}}
                             <div class="pt-4 mt-auto">
-                                {{-- Add to Cart form/logic would go here --}}
-                              <div class="flex items-center gap-4">
-                                  {{-- Quantity Input Group --}}
-                                  <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden shadow-sm">
-                                      <button type="button" @click="quantity = Math.max(1, quantity - 1)"
-                                              class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out">
-                                          -
-                                      </button>
-                                      <input type="number" name="quantity" x-model.number="quantity" min="1" readonly
-                                             class="w-16 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-0 appearance-none [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0">
-                                      <button type="button" @click="quantity++"
-                                              class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out">
-                                          +
-                                      </button>
-                                  </div>
-                                  {{-- Add to Cart Button with Icon, Gradient, and Effects --}}
-                                  <flux:button type="submit" variant="primary"
-                                               class="flex-1 sm:flex-none px-6 py-2 font-semibold flex items-center gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-lg shadow-orange-500/30 transition-all duration-200 ease-in-out transform hover:scale-105 hover:from-pink-500 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 active:scale-95"
-                                               tooltip="Add this product to your cart!"
-                                               tooltip:position="right"
-                                  >
-                                      <flux:icon name="shopping-cart" class="h-5 w-5 inline-block" />
-                                      <span>Add to Cart</span>
-                                  </flux:button>
-                              </div>
-                              {{-- </form> --}}
+                                <form action="{{ route('cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <div class="flex items-center gap-4">
+                                        {{-- Quantity Input Group --}}
+                                        <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden shadow-sm">
+                                            <button type="button" @click="quantity = Math.max(1, quantity - 1)"
+                                                    class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out">
+                                                -
+                                            </button>
+                                            {{-- Note: The x-model on quantity input will still work for display,
+                                                 but we need a hidden input or ensure the name="quantity" on the visible one is submitted.
+                                                 The current setup with readonly might prevent direct submission of the visible input's value
+                                                 if not handled carefully by Alpine or a hidden input.
+                                                 For simplicity, let's ensure the visible input's name is "quantity" and it's not readonly,
+                                                 or add a hidden input that Alpine updates.
+                                                 Let's make the visible input submittable by removing readonly and relying on Alpine to set its value.
+                                            --}}
+                                            <input type="number" name="quantity" x-model.number="quantity" min="1"
+                                                   class="w-16 text-center border-y border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-0 appearance-none [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0">
+                                            <button type="button" @click="quantity++"
+                                                    class="px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors duration-150 ease-in-out">
+                                                +
+                                            </button>
+                                        </div>
+                                        {{-- Add to Cart Button with Icon, Gradient, and Effects --}}
+                                        <flux:button type="submit" variant="primary"
+                                                     class="flex-1 sm:flex-none px-6 py-2 font-semibold flex items-center gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-lg shadow-orange-500/30 transition-all duration-200 ease-in-out transform hover:scale-105 hover:from-pink-500 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 active:scale-95"
+                                                     tooltip="Add this product to your cart!"
+                                                     tooltip:position="right"
+                                        >
+                                            <flux:icon name="shopping-cart" class="h-5 w-5 inline-block" />
+                                            <span>Add to Cart</span>
+                                        </flux:button>
+                                    </div>
+                                </form>
                           </div>
                       </div>
                   </div>

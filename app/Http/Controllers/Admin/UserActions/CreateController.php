@@ -13,7 +13,7 @@ class CreateController extends Controller
      */
     public function __invoke(): View
     {
-        // The controller simply returns the view.
+        // The controller returns the view.
         // Might want to pass roles here if needed in the form.
         // $roles = ['admin', 'customer'];
         // return view('admin.users.form', compact('roles'));

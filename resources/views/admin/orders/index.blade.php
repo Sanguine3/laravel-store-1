@@ -56,19 +56,30 @@
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                 <thead class="bg-zinc-50 dark:bg-zinc-800">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Order ID</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Customer</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Date</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total</th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
+                       @php
+                           $sortLink = fn($field, $displayName) => '
+                               <a href="' . route('admin.orders.index', array_merge(request()->except(['sort_by', 'direction', 'page']), ['sort_by' => $field, 'direction' => $sortField == $field && $sortDirection == 'asc' ? 'desc' : 'asc'])) . '" class="group inline-flex items-center">
+                                   ' . $displayName . '
+                                   <span class="ml-1 text-zinc-400 group-hover:text-zinc-500 ' . ($sortField == $field ? 'text-zinc-600 dark:text-zinc-300' : '') . '">
+                                       ' . ($sortField == $field ? ($sortDirection == 'asc' ? '↑' : '↓') : '↕') . '
+                                   </span>
+                               </a>';
+                       @endphp
+                       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{!! $sortLink('order_number', 'Order ID') !!}</th>
+                       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Customer</th>
+                       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{!! $sortLink('created_at', 'Date') !!}</th>
+                       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{!! $sortLink('status', 'Status') !!}</th>
+                       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{!! $sortLink('total_amount', 'Total') !!}</th>
+                       <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($orders as $order)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
-                                <span class="font-mono text-sm">#{{ $order->id }}</span>
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="font-mono text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">
+                                    #{{ $order->order_number ?? $order->id }}
+                                </a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
                                 <div class="flex items-center gap-3">
@@ -102,7 +113,21 @@
                                 ${{ number_format($order->total_amount, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <flux:button href="{{ route('admin.orders.show', $order->id) }}" as="a" color="info" size="sm" icon="eye" tooltip="View" class="mr-1 !bg-blue-500 !text-white hover:!bg-blue-600 focus:!ring-blue-400" />
+                               <div class="flex items-center justify-end gap-1">
+                                   <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="flex items-center gap-1" x-data="{ currentStatus: '{{ $order->status }}' }">
+                                       @csrf
+                                       @method('PUT')
+                                       <select name="status" x-model="currentStatus" @change="$event.target.form.submit()"
+                                               class="block w-full pl-3 pr-8 py-1.5 text-xs border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm appearance-none">
+                                           @foreach($statuses as $statusOption)
+                                               <option value="{{ $statusOption }}" {{ $order->status == $statusOption ? 'selected' : '' }}>{{ ucfirst($statusOption) }}</option>
+                                           @endforeach
+                                       </select>
+                                       {{-- Minimalist submit button, hidden if JS enabled and select @change works --}}
+                                       {{-- <button type="submit" class="text-xs px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded" x-show="currentStatus !== '{{ $order->status }}'">Save</button> --}}
+                                   </form>
+                                   <flux:button href="{{ route('admin.orders.show', $order->id) }}" as="a" variant="ghost" size="xs" icon="eye" tooltip="View Details" class="!p-1.5" />
+                               </div>
                             </td>
                         </tr>
                     @empty

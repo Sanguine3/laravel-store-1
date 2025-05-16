@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Blade; // Added
+use App\Http\View\Composers\CartComposer;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-Blade::anonymousComponentPath(resource_path('views/components/phosphor'), 'phosphor');
+        Blade::anonymousComponentPath(resource_path('views/components/phosphor'), 'phosphor');
+
+        // Attach CartComposer to ALL views
+        View::composer('*', CartComposer::class);
     }
 }

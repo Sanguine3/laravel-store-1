@@ -3,27 +3,29 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class ConfirmPasswordController extends Controller
 {
     /**
      * Show the password confirmation view.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function showConfirmForm()
     {
-        return view('auth.confirm-password'); // Placeholder, view needs creation
+        return view('auth.confirm-password');
     }
 
     /**
      * Confirm the user's password.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function confirm(Request $request)
     {
@@ -33,7 +35,7 @@ class ConfirmPasswordController extends Controller
         ]);
 
         // 2. Validate the password against the authenticated user
-        if (! Auth::guard('web')->validate([
+        if (!Auth::guard('web')->validate([
             'email' => $request->user()->email, // Get email from authenticated user
             'password' => $request->password,
         ])) {

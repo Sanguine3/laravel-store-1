@@ -16,7 +16,7 @@ class ShowController extends Controller
     {
         // Ensure the product is published before showing
         if (!$product->is_published) {
-             abort(404);
+            abort(404);
         }
 
         // Eager load category if the view needs it

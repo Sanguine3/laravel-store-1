@@ -13,7 +13,7 @@ class IndexController extends Controller
      * Handle the incoming request.
      * Display a listing of the customer's orders.
      */
-    public function __invoke(): View // Removed Request $request as it's not used
+    public function __invoke(): View
     {
         // Fetch all orders for the currently authenticated user
         $orders = Order::where('user_id', Auth::id())

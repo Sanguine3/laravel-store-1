@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class IndexController extends Controller
@@ -45,8 +46,10 @@ class IndexController extends Controller
 
         $products = $productsQuery->paginate(12)->withQueryString();
 
-        // Fetch categories for the filter dropdown
-        $categories = Category::query()->orderBy('name')->get();
+        // Fetch categories for the filter dropdown, now with caching
+        $categories = Cache::remember('categories.all_sorted_by_name', now()->addHours(24), function () {
+            return Category::query()->orderBy('name')->get();
+        });
 
         return view('customer.products.index', compact('products', 'categories', 'search', 'categoryFilter', 'sortField', 'sortDirection'));
     }

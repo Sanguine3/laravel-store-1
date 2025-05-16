@@ -16,23 +16,54 @@ class IndexController extends Controller
     public function __invoke(Request $request): View
     {
         $search = $request->input('search');
-        $roleFilter = $request->input('role'); // Use 'role' as query param
+        $roleFilter = $request->input('role');
+        $userStateFilter = $request->input('user_state'); // 'active', 'deleted'
+        $sortField = $request->input('sort_by', 'created_at'); // Default sort: joined date
+        $sortDirection = $request->input('direction', 'desc'); // Default direction: newest first
 
-        $users = User::withTrashed() // Include soft-deleted users
-        ->when($search, fn($query, $search) => $query->where(fn($q) => // Group where clauses
-        $q->where('name', 'like', '%' . $search . '%')
-            ->orWhere('email', 'like', '%' . $search . '%')
-        )
-        )
+        $validSortFields = ['name', 'email', 'created_at', 'role'];
+        if (!in_array($sortField, $validSortFields)) {
+            $sortField = 'created_at';
+        }
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $users = User::query()
+            ->when($userStateFilter === 'deleted', fn($query) => $query->onlyTrashed())
+            ->when($userStateFilter === 'active', fn($query) => $query->whereNull('deleted_at'))
+            ->when($userStateFilter === null || $userStateFilter === '', fn($query) => $query->withTrashed()) // Default to show all including trashed
+            ->when($search, fn($query, $search) => $query->where(fn($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+            )
+            )
             ->when($roleFilter, fn($query, $role) => $query->where('role', $role)
             )
-            ->orderBy('name') // Default sort by name
-            ->paginate(15) // Adjust pagination count as needed
-            ->withQueryString(); // Append query string parameters
+            ->orderBy($sortField, $sortDirection)
+            ->paginate(15)
+            ->withQueryString();
 
         // Define roles for filter dropdown
-        $roles = ['admin', 'customer']; // Fetch dynamically if needed
+        $roles = User::distinct()->pluck('role')->filter()->sort()->values()->all();
+        if (empty($roles)) { // Fallback
+            $roles = ['admin', 'customer'];
+        }
 
-        return view('admin.users.index', compact('users', 'roles', 'search', 'roleFilter'));
+        $userStateOptions = [
+            '' => 'All States',
+            'active' => 'Active',
+            'deleted' => 'Deleted',
+        ];
+
+        return view('admin.users.index', compact(
+            'users',
+            'roles',
+            'search',
+            'roleFilter',
+            'userStateFilter',
+            'userStateOptions',
+            'sortField',
+            'sortDirection'
+        ));
     }
 }

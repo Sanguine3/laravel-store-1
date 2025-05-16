@@ -17,24 +17,37 @@ class IndexController extends Controller
     {
         $search = $request->input('search');
         $statusFilter = $request->input('status');
+        $sortField = $request->input('sort_by', 'created_at'); // Default sort field
+        $sortDirection = $request->input('direction', 'desc'); // Default sort direction
+
+        $validSortFields = ['created_at', 'status', 'total_amount', 'id', 'order_number']; // Add 'order_number' if you use it
+        if (!in_array($sortField, $validSortFields)) {
+            $sortField = 'created_at';
+        }
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
 
         $orders = Order::with('user') // Eager load user relationship
-        ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', '%' . $search . '%') // Search by Order ID
-                ->orWhereHas('user', function ($userQuery) use ($search) { // Search by Customer Name
-                    $userQuery->where('name', 'like', '%' . $search . '%');
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', "%{$search}%")
+                      ->orWhere('order_number', 'like', "%{$search}%") // Also search by order_number
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('name', 'like', "%{$search}%");
+                      });
                 });
-            });
-        })
+            })
             ->when($statusFilter, fn($query, $status) => $query->where('status', $status))
-            ->latest() // Default sort by latest
-            ->paginate(15) // Adjust pagination count as needed
-            ->withQueryString(); // Append query string parameters
+            ->orderBy($sortField, $sortDirection)
+            ->paginate(15)
+            ->withQueryString();
 
-        // Define possible statuses for the filter dropdown
-        $statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled']; // Or fetch from a config/enum
+        $statuses = Order::distinct()->pluck('status')->filter()->sort()->values()->all();
+        if(empty($statuses)) { // Fallback if no orders exist yet or all statuses are null
+            $statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
+        }
 
-        return view('admin.orders.index', compact('orders', 'statuses', 'search', 'statusFilter'));
+        return view('admin.orders.index', compact('orders', 'statuses', 'search', 'statusFilter', 'sortField', 'sortDirection'));
     }
 }

@@ -17,6 +17,14 @@
                     <flux:navlist.item icon="cube" :href="route('products.index')" :current="request()->routeIs('products.index')" wire:navigate>{{ __('Products') }}</flux:navlist.item>
                     @if(auth()->check() && auth()->user()->role === 'customer')
                     <flux:navlist.item icon="clipboard" :href="route('orders')" :current="request()->routeIs('orders')" wire:navigate>{{ __('My Orders') }}</flux:navlist.item>
+                    <flux:navlist.item icon="shopping-cart" :href="route('cart.view')" :current="request()->routeIs('cart.view') || request()->routeIs('cart.add') || request()->routeIs('checkout.*')" wire:navigate>
+                        <span>{{ __('Cart') }}</span>
+                        @if(isset($cartItemCount) && $cartItemCount > 0)
+                            <span class="ml-auto inline-block py-0.5 px-2 text-xs font-semibold text-white bg-orange-500 rounded-full">
+                                {{ $cartItemCount }}
+                            </span>
+                        @endif
+                    </flux:navlist.item>
                     @endif
                 </flux:navlist.group>
             </flux:navlist>

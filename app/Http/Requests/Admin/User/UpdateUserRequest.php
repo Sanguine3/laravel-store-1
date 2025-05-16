@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-// Use the Password rule object
-
 class UpdateUserRequest extends FormRequest
 {
     /**

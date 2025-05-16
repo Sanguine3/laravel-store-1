@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 
 class StoreController extends Controller
 {
@@ -19,6 +20,8 @@ class StoreController extends Controller
         $validatedData = $request->validated();
 
         Category::create($validatedData);
+
+        Cache::forget('categories.all_sorted_by_name'); // Clear the cache
 
         return redirect()->route('admin.categories.index')->with('status', 'Category created successfully.');
     }

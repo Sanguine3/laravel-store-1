@@ -74,7 +74,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <!-- User State Filter -->
+                <div class="min-w-[160px] md:min-w-[200px] w-full sm:w-auto" x-data="{ openUserStateFilter: false, selectedUserStateFilter: '{{ $userStateFilter ?? '' }}', userStateOptionsMap: {{ Js::from($userStateOptions) }} }">
+                   <label for="user-state-filter-button" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">State</label>
+                   <input type="hidden" name="user_state" x-model="selectedUserStateFilter">
+                   <div class="relative">
+                       <button @click="openUserStateFilter = !openUserStateFilter" type="button" id="user-state-filter-button" class="w-full flex items-center justify-between px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm bg-white dark:bg-zinc-700 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                           <span x-text="userStateOptionsMap[selectedUserStateFilter] || 'All States'">
+                               {{ $userStateOptions[$userStateFilter] ?? 'All States' }}
+                           </span>
+                           <svg class="ml-2 -mr-0.5 h-4 w-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                       </button>
+                       <div x-show="openUserStateFilter" @click.away="openUserStateFilter = false"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-700 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-600 max-h-60 overflow-y-auto py-1" style="display: none;">
+                           @foreach($userStateOptions as $value => $label)
+                               <a href="#" @click.prevent="selectedUserStateFilter = '{{ $value }}'; openUserStateFilter = false" class="block px-4 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-600">{{ $label }}</a>
+                           @endforeach
+                       </div>
+                   </div>
+               </div>
+           </div>
             <!-- Apply Filters Button -->
             <div class="flex items-stretch sm:items-end gap-2 w-full sm:w-auto">
                 <button type="submit"
@@ -96,26 +121,30 @@
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                 <thead class="bg-zinc-50 dark:bg-zinc-800">
                 <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        User
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        Email
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        Role
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        Status
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        Joined
-                    </th>
+                   @php
+                       $sortLink = fn($field, $displayName) => '
+                           <a href="' . route('admin.users.index', array_merge(request()->except(['sort_by', 'direction', 'page']), ['sort_by' => $field, 'direction' => $sortField == $field && $sortDirection == 'asc' ? 'desc' : 'asc'])) . '" class="group inline-flex items-center">
+                               ' . $displayName . '
+                               <span class="ml-1 text-zinc-400 group-hover:text-zinc-500 ' . ($sortField == $field ? 'text-zinc-600 dark:text-zinc-300' : '') . '">
+                                   ' . ($sortField == $field ? ($sortDirection == 'asc' ? '↑' : '↓') : '↕') . '
+                               </span>
+                           </a>';
+                   @endphp
+                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                       {!! $sortLink('name', 'User') !!}
+                   </th>
+                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                       {!! $sortLink('email', 'Email') !!}
+                   </th>
+                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                       {!! $sortLink('role', 'Role') !!}
+                   </th>
+                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                       Status {{-- Not easily sortable by 'active'/'deleted' without a dedicated column or complex query --}}
+                   </th>
+                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                       {!! $sortLink('created_at', 'Joined') !!}
+                   </th>
                     <th scope="col"
                         class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                         Actions

@@ -7,10 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password as PasswordRule;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-
-// Keep Auth facade for consistency or use $request->user()
 
 class PasswordController extends Controller
 {
@@ -21,7 +18,7 @@ class PasswordController extends Controller
      */
     public function edit()
     {
-        return view('settings.password'); // Placeholder, view needs creation
+        return view('settings.password');
     }
 
     /**
