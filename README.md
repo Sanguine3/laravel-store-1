@@ -92,7 +92,6 @@ We welcome contributions! Here's how to get started:
 - [Vue 3](https://vuejs.org/) - The Progressive JavaScript Framework
 - [Inertia.js](https://inertiajs.com/) - The modern monolith
 - [PrimeVue](https://primevue.org/) - UI Component Library
-- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
 
 ## License
 
