@@ -1,26 +1,22 @@
 <?php
 
-use Livewire\Volt\Volt;
+use App\Models\User;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 test('registration screen can be rendered', function () {
-    $response = $this->get('/register');
-
+    $response = $this->get(route('register.form'));
     $response->assertStatus(200);
 });
 
 test('new users can register', function () {
-    $response = Volt::test('auth.register')
-        ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
-        ->set('password', 'password')
-        ->set('password_confirmation', 'password')
-        ->call('register');
+    $response = $this->post(route('register'), [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
 
-    $response
-        ->assertHasNoErrors()
-        ->assertRedirect(route('dashboard', absolute: false));
-
+    $response->assertRedirect(route('dashboard'));
     $this->assertAuthenticated();
 });

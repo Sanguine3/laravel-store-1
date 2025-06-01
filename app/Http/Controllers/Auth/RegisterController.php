@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Inertia\Inertia;
 
 // Import for redirection target
 
@@ -25,7 +26,7 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        return view('auth.register');
+        return Inertia::render('Auth/Register');
     }
 
     /**

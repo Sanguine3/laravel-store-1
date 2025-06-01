@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ResetPasswordController extends Controller
 {
@@ -19,14 +20,14 @@ class ResetPasswordController extends Controller
      * Display the password reset view.
      *
      * @param Request $request
-     * @return View
+     * @return Response
      */
-    public function showResetForm(Request $request)
+    public function showResetForm(Request $request): Response
     {
-        // Pass the token and email to the view
-        return view('auth.passwords.reset')->with(
-            ['token' => $request->route('token'), 'email' => $request->query('email')]
-        );
+        return Inertia::render('Auth/ResetPassword', [
+            'token' => $request->route('token'),
+            'email' => $request->query('email'),
+        ]);
     }
 
     /**
@@ -37,7 +38,7 @@ class ResetPasswordController extends Controller
      *
      * @throws ValidationException
      */
-    public function reset(Request $request)
+    public function reset(Request $request): RedirectResponse
     {
         // 1. Validate the incoming request data
         $request->validate([
@@ -63,7 +64,7 @@ class ResetPasswordController extends Controller
 
         // 3. Handle the response based on the status
         if ($status == Password::PASSWORD_RESET) {
-            // Redirect to login with success message
+            // Redirect to log in with success message
             return redirect()->route('login')->with('status', __($status));
         }
 

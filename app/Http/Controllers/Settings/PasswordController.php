@@ -3,46 +3,35 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePasswordRequest;
+use App\Services\PasswordService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password as PasswordRule;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PasswordController extends Controller
 {
     /**
      * Show the form for editing the user's password.
      *
-     * @return View
+     * @return Response
      */
-    public function edit()
+    public function edit(): Response
     {
-        return view('settings.password');
+        return Inertia::render('Settings/Password');
     }
 
     /**
      * Update the user's password.
      *
-     * @param Request $request
+     * @param UpdatePasswordRequest $request
+     * @param PasswordService $service
      * @return RedirectResponse
      */
-    public function update(Request $request)
+    public function update(UpdatePasswordRequest $request, PasswordService $service): RedirectResponse
     {
-        // 1. Validate the request data
-        // Note: The 'current_password' rule automatically checks against the authenticated user
-        $validated = $request->validateWithBag('updatePassword', [ // Use a specific error bag
-            'current_password' => ['required', 'string', 'current_password'],
-            'password' => ['required', 'string', PasswordRule::defaults(), 'confirmed'],
-        ]);
-
-        // 2. Update the user's password
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        // 3. Redirect back with success status
-        // The 'password-updated' status matches the check in the Blade view
-        return back()->with('status', 'password-updated');
+        $data = $request->validated();
+        $service->updatePassword($request->user(), $data['password']);
+        return redirect()->route('settings.password')->with('success', 'Password updated.');
     }
 }

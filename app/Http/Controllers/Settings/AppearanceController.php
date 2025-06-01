@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AppearanceController extends Controller
 {
     /**
      * Show the form for editing appearance settings.
      *
-     * @return \Illuminate\View\View
+     * @return Response
      */
-    public function edit()
+    public function edit(): Response
     {
-        return view('settings.appearance');
+        return Inertia::render('Settings/Appearance');
     }
 }

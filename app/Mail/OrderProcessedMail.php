@@ -54,7 +54,7 @@ class OrderProcessedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.orders.processed',
+            view: 'emails.order-processed',
             with: [
                 // Public properties $order, $customerName, $customerEmail are automatically available to the view.
                 // The HTML view template will construct any necessary URLs from the $order object.

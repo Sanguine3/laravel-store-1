@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 // Add Password facade import
 
@@ -16,11 +16,11 @@ class ForgotPasswordController extends Controller
     /**
      * Display the form to request a password reset link.
      *
-     * @return View
+     * @return Response
      */
-    public function showLinkRequestForm()
+    public function showLinkRequestForm(): Response
     {
-        return view('auth.passwords.email');
+        return Inertia::render('Auth/ForgotPassword', ['status' => session('status')]);
     }
 
     /**
@@ -29,9 +29,8 @@ class ForgotPasswordController extends Controller
      * @param Request $request
      * @return RedirectResponse
      *
-     * @throws ValidationException
      */
-    public function sendResetLinkEmail(Request $request)
+    public function sendResetLinkEmail(Request $request): RedirectResponse
     {
         // 1. Validate the email address
         $request->validate(['email' => ['required', 'string', 'email']]);

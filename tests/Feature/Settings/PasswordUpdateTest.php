@@ -2,40 +2,41 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Volt\Volt;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('password can be updated', function () {
+test('authenticated user can update password', function () {
     $user = User::factory()->create([
-        'password' => Hash::make('password'),
+        'password' => Hash::make('old-password'),
     ]);
 
     $this->actingAs($user);
 
-    $response = Volt::test('users.password')
-        ->set('current_password', 'password')
-        ->set('password', 'new-password')
-        ->set('password_confirmation', 'new-password')
-        ->call('updatePassword');
+    $response = $this->put(route('settings.password.update'), [
+        'current_password' => 'old-password',
+        'password' => 'new-password',
+        'password_confirmation' => 'new-password',
+    ]);
 
-    $response->assertHasNoErrors();
-
+    $response->assertRedirect(route('settings.password'));
     expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
 });
 
-test('correct password must be provided to update password', function () {
+test('invalid current password fails to update password', function () {
     $user = User::factory()->create([
-        'password' => Hash::make('password'),
+        'password' => Hash::make('old-password'),
     ]);
 
     $this->actingAs($user);
 
-    $response = Volt::test('users.password')
-        ->set('current_password', 'wrong-password')
-        ->set('password', 'new-password')
-        ->set('password_confirmation', 'new-password')
-        ->call('updatePassword');
+    $response = $this->from(route('settings.password'))
+        ->put(route('settings.password.update'), [
+            'current_password' => 'wrong-password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ]);
 
-    $response->assertHasErrors(['current_password']);
+    $response->assertRedirect(route('settings.password'));
+    $response->assertSessionHasErrors('current_password');
+    expect(Hash::check('old-password', $user->refresh()->password))->toBeTrue();
 });
