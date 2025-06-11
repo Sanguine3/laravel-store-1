@@ -28,7 +28,7 @@
                     <a href="{{ route('products.index') }}"
                        class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
                     >
-                        <flux:icon name="layout-grid" class="h-5 w-5 inline-block" />
+                        <x-icon name="layout-grid" class="h-5 w-5 inline-block" />
                         <span>View Products</span>
                     </a>
                     <div class="flex items-center gap-4">

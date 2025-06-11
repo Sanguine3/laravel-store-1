@@ -35,44 +35,40 @@
             <input type="hidden" name="token" value="{{ $token }}">
 
             <!-- Email Address -->
-            {{-- Assuming flux:input handles displaying @error('email') internally or add it --}}
-            {{-- Email is typically hidden or read-only on this form, but kept visible based on original view --}}
-            <flux:input
+            <x-input
                 name="email"
-                :label="__('Email')"
+                label="{{ __('Email') }}"
                 type="email"
                 required
                 autocomplete="email"
-                :value="old('email', $email)" {{-- Pre-fill email from request/token --}}
+                value="{{ old('email', $email) }}"
             />
 
             <!-- Password -->
-            {{-- Assuming flux:input handles displaying @error('password') internally or add it --}}
-            <flux:input
+            <x-input
                 name="password"
-                :label="__('Password')"
+                label="{{ __('Password') }}"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Password')"
-                autofocus {{-- Autofocus the password field --}}
+                placeholder="{{ __('Password') }}"
+                autofocus
             />
 
             <!-- Confirm Password -->
-            {{-- Assuming flux:input handles displaying @error('password_confirmation') internally or add it --}}
-            <flux:input
+            <x-input
                 name="password_confirmation"
-                :label="__('Confirm password')"
+                label="{{ __('Confirm password') }}"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Confirm password')"
+                placeholder="{{ __('Confirm password') }}"
             />
 
             <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full">
+                <x-button type="submit" variant="primary" class="w-full">
                     {{ __('Reset password') }}
-                </flux:button>
+                </x-button>
             </div>
         </form>
     </div>

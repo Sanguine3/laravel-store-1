@@ -37,7 +37,7 @@
                 <!-- My Total Orders -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-8 flex items-center">
                     <div class="p-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-6">
-                        <flux:icon name="shopping-bag" class="h-8 w-8"/>
+                        <x-icon name="shopping-bag" class="h-8 w-8"/>
                     </div>
                     <div>
                         <p class="text-base font-medium text-gray-500 dark:text-zinc-400">My Total Orders</p>
@@ -59,14 +59,14 @@
                 <a href="{{ route('products.index') }}"
                    class="flex items-center p-6 bg-teal-50 dark:bg-teal-900/20 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900/30 transition-colors border border-teal-200 dark:border-teal-800 shadow-sm">
                     <div class="p-3 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 mr-4">
-                        <flux:icon name="layout-grid" class="h-6 w-6"/> {{-- Icon for browsing products --}}
+                        <x-icon name="layout-grid" class="h-6 w-6"/> {{-- Icon for browsing products --}}
                     </div>
                     <span class="text-base font-medium text-teal-900 dark:text-teal-200">View All Products</span>
                 </a>
                 <a href="{{ route('orders') }}"
                    class="flex items-center p-6 bg-gray-50 dark:bg-gray-900/20 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900/30 transition-colors border border-gray-200 dark:border-gray-800 shadow-sm">
                     <div class="p-3 rounded-full bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300 mr-4">
-                        <flux:icon name="clipboard" class="h-6 w-6"/>
+                        <x-icon name="clipboard" class="h-6 w-6"/>
                     </div>
                     <span class="text-base font-medium text-gray-900 dark:text-gray-100">View My Orders</span>
                 </a>
@@ -74,7 +74,7 @@
                    class="flex items-center p-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors border border-amber-200 dark:border-amber-800 shadow-sm">
                     <div
                         class="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-4">
-                        <flux:icon name="user" class="h-6 w-6"/>
+                        <x-icon name="user" class="h-6 w-6"/>
                     </div>
                     <span class="text-base font-medium text-amber-900 dark:text-amber-200">Account Settings</span>
                 </a>
@@ -120,7 +120,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400">{{ $order->created_at->format('M d, Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <flux:badge size="sm" inset="top bottom" @class([
+                                    <x-badge size="sm" inset="top bottom" @class([
                                             'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' => $order->status === 'completed',
                                             'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400' => $order->status === 'pending' || $order->status === 'processing',
                                             'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' => $order->status === 'cancelled',
@@ -128,7 +128,7 @@
                                             'bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-400' => !in_array($order->status, ['completed','pending', 'processing', 'cancelled', 'shipped']),
                                         ])>
                                         {{ ucfirst($order->status) }}
-                                    </flux:badge>
+                                    </x-badge>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
                                     ${{ number_format($order->total_amount, 2) }}</td>
@@ -142,11 +142,11 @@
                                 <td colspan="5"
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white text-center">
                                     <div class="py-8">
-                                        <flux:icon name="shopping-bag"
+                                        <x-icon name="shopping-bag"
                                                    class="h-10 w-10 mx-auto text-gray-400 dark:text-gray-500"/>
                                         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No orders
                                             found</h3>
-                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You haven’t placed any
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You haven't placed any
                                             orders yet.</p>
                                     </div>
                                 </td>

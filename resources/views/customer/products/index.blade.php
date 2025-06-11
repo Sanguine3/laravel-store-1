@@ -21,22 +21,32 @@
                         <!-- Search Input -->
                         <div class="flex-1 min-w-0 w-full">
                             <label for="product-search" class="sr-only">Search products</label>
-                            <flux:input type="search" name="search" x-model="search"
-                                        @input.debounce.300ms="$refs.filterForm.submit()" id="product-search"
-                                        placeholder="Search products..." icon="magnifying-glass" class="w-full"/>
+                            <x-input
+                                type="search"
+                                name="search"
+                                id="product-search"
+                                x-model="search"
+                                @input.debounce.300ms="$refs.filterForm.submit()"
+                                placeholder="Search products..."
+                                class="w-full"
+                            />
                         </div>
 
                         <!-- Category Filter (Flux Select) -->
                         <div class="w-full sm:w-56">
                             <label for="category-filter-flux" class="sr-only">Filter by category</label>
-                            <flux:select name="category" x-model="categoryFilter" @change="$refs.filterForm.submit()"
-                                         id="category-filter-flux" class="w-full">
-                                <flux:select.option value="">All Categories</flux:select.option>
+                            <x-select
+                                name="category"
+                                id="category-filter-flux"
+                                x-model="categoryFilter"
+                                @change="$refs.filterForm.submit()"
+                                class="w-full"
+                            >
+                                <option value="">All Categories</option>
                                 @foreach($categories as $category)
-                                    <flux:select.option
-                                        value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
-                            </flux:select>
+                            </x-select>
                         </div>
                         <!-- Submit Button (Optional, kept for explicit filtering) -->
                         <div class="w-full sm:w-auto">
@@ -144,7 +154,7 @@
                                                     aria-label="Decrease quantity"
                                                     :disabled="quantity <= 1"
                                                 >
-                                                    <flux:icon name="minus" class="w-4 h-4"/>
+                                                    <x-icon name="minus" class="w-4 h-4"/>
                                                 </button>
                                                 <input
                                                     type="text"
@@ -163,22 +173,21 @@
                                                     aria-label="Increase quantity"
                                                     :disabled="quantity >= {{ $product->stock_quantity > 0 ? $product->stock_quantity : 0 }} || {{ $product->stock_quantity <= 0 ? 'true' : 'false' }}"
                                                 >
-                                                    <flux:icon name="plus" class="w-4 h-4"/>
+                                                    <x-icon name="plus" class="w-4 h-4"/>
                                                 </button>
                                             </div>
                                         </div>
-                                        <flux:button
+                                        <x-button
                                             type="submit"
-                                            variant="primary" {{-- Base variant, gradient will override background --}}
+                                            variant="primary"
                                             size="sm"
-                                            icon="shopping-cart"
                                             class="flex-grow py-1.5 text-white font-semibold shadow-md hover:shadow-lg bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
                                             :disabled="$product->stock_quantity <= 0"
                                         >
-                                            <span
-                                                class="sm:hidden">Add</span> {{-- Text for smaller screens, icon is primary --}}
+                                            <span class="sm:hidden">Add</span>
                                             <span class="hidden sm:inline">Quick Add</span>
-                                        </flux:button>
+                                            <x-icon name="shopping-cart" class="h-5 w-5 inline-block" />
+                                        </x-button>
                                     </form>
                                     @if($product->stock_quantity <= 0)
                                         <p class="text-xs text-red-500 dark:text-red-400 mt-1 text-center">Out of
@@ -199,7 +208,7 @@
                 </div>
             @else
                 <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                    <flux:icon name="cube" class="h-12 w-12 mx-auto text-gray-400"/>
+                    <x-icon name="cube" class="h-12 w-12 mx-auto text-gray-400"/>
                     <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No products found</h3>
                     @if($search || $categoryFilter)
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter

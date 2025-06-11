@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\ConfirmPasswordRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -24,15 +24,12 @@ class ConfirmPasswordController extends Controller
     /**
      * Confirm the user's password.
      *
-     * @param Request $request
+     * @param ConfirmPasswordRequest $request
      * @return RedirectResponse
      */
-    public function confirm(Request $request)
+    public function confirm(ConfirmPasswordRequest $request)
     {
-        // 1. Validate the password input
-        $request->validate([
-            'password' => ['required', 'string'],
-        ]);
+        // Validation passed
 
         // 2. Validate the password against the authenticated user
         if (!Auth::guard('web')->validate([

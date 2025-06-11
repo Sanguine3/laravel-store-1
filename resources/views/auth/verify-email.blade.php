@@ -2,23 +2,23 @@
     <div class="mt-4 flex flex-col gap-6">
         <x-auth-header :title="__('Verify Your Email Address')" :description="__('Please check your inbox for a verification link.')" />
 
-        <flux:text class="text-center">
+        <p class="text-center">
             {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-        </flux:text>
+        </p>
 
         @if (session('status') == 'verification-link-sent')
-            <flux:text class="text-center font-medium !dark:text-green-400 !text-green-600">
+            <p class="text-center font-medium !dark:text-green-400 !text-green-600">
                 {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-            </flux:text>
+            </p>
         @endif
 
         <div class="flex flex-col items-center justify-between space-y-3">
             {{-- Resend Button as a Form --}}
             <form method="POST" action="{{ route('verification.send') }}" class="w-full">
                 @csrf
-                <flux:button type="submit" variant="primary" class="w-full">
+                <x-button type="submit" variant="primary" class="w-full">
                     {{ __('Resend verification email') }}
-                </flux:button>
+                </x-button>
             </form>
 
             {{-- Logout Button as a Form --}}

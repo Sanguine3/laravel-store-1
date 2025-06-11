@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -26,15 +26,14 @@ class ForgotPasswordController extends Controller
     /**
      * Handle an incoming password reset link request.
      *
-     * @param Request $request
+     * @param ForgotPasswordRequest $request
      * @return RedirectResponse
      *
      * @throws ValidationException
      */
-    public function sendResetLinkEmail(Request $request)
+    public function sendResetLinkEmail(ForgotPasswordRequest $request)
     {
-        // 1. Validate the email address
-        $request->validate(['email' => ['required', 'string', 'email']]);
+        // Validation passed
 
         // 2. Attempt to send the reset link
         $status = Password::sendResetLink($request->only('email'));

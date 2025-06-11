@@ -40,14 +40,14 @@
 
                 {{-- Name Input --}}
                 <div>
-                    <flux:input
+                    <x-input
                         name="name"
-                        :label="__('Name')"
+                        label="{{ __('Name') }}"
                         type="text"
                         required
                         autofocus
                         autocomplete="name"
-                        :value="old('name', $user->name)"
+                        value="{{ old('name', $user->name) }}"
                     />
                      @error('name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
@@ -55,13 +55,13 @@
 
                 {{-- Email Input & Verification --}}
                 <div>
-                    <flux:input
+                    <x-input
                         name="email"
-                        :label="__('Email')"
+                        label="{{ __('Email') }}"
                         type="email"
                         required
                         autocomplete="email"
-                        :value="old('email', $user->email)"
+                        value="{{ old('email', $user->email) }}"
                     />
                      @error('email') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
 
@@ -69,7 +69,7 @@
                     {{-- This x-show can remain as it's simple UI toggling --}}
                     @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                         <div x-data="{ needsReverification: {{ !$user->hasVerifiedEmail() && old('email', $user->email) === $user->email ? 'true' : 'false' }} }" x-show="needsReverification" class="mt-4">
-                            <flux:text>
+                            <p>
                                 {{ __('Your email address is unverified.') }}
                                 {{-- Resend Verification Form (standard POST) --}}
                                 <form method="POST" action="{{ route('verification.send') }}" class="inline">
@@ -78,12 +78,12 @@
                                         {{ __('Click here to re-send the verification email.') }}
                                     </button>
                                 </form>
-                            </flux:text>
+                            </p>
                             {{-- Display status if verification link was sent (standard session flash) --}}
                             @if (session('status') === 'verification-link-sent')
-                                <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                                <p class="mt-2 font-medium !dark:text-green-400 !text-green-600">
                                     {{ __('A new verification link has been sent to your email address.') }}
-                                </flux:text>
+                                </p>
                             @endif
                         </div>
                     @endif
@@ -92,9 +92,9 @@
                 {{-- Save Button --}}
                 <div class="flex items-center gap-4 mt-6"> {{-- Added mt-6 for spacing --}}
                     <div class="flex items-center justify-end">
-                        <flux:button variant="primary" type="submit" class="w-full">
+                        <x-button variant="primary" type="submit" class="w-full">
                             {{ __('Save') }}
-                        </flux:button>
+                        </x-button>
                     </div>
                 </div>
             </form>
@@ -103,36 +103,34 @@
             <hr class="my-6 border-zinc-200 dark:border-zinc-700">
 
             <div x-data="{ confirmingUserDeletion: false }" class="space-y-6">
-                <flux:heading level="2">{{ __('Delete Account') }}</flux:heading>
-                <flux:subheading>{{ __('Permanently delete your account.') }}</flux:subheading>
+                <h2 class="text-xl font-semibold">{{ __('Delete Account') }}</h2>
+                <h3 class="text-lg font-medium">{{ __('Permanently delete your account.') }}</h3>
 
-                <flux:text>
+                <p>
                     {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
-                </flux:text>
+                </p>
 
-                <flux:button variant="danger" @click="confirmingUserDeletion = true">
+                <x-button variant="danger" @click="confirmingUserDeletion = true">
                     {{ __('Delete Account') }}
-                </flux:button>
+                </x-button>
 
                 {{-- Confirmation Modal --}}
-                <flux:modal wire:model="confirmingUserDeletion" max-width="lg" x-show="confirmingUserDeletion" @close="confirmingUserDeletion = false" style="display: none;">
+                <x-modal :show="confirmingUserDeletion">
                     <form method="POST" action="{{ route('settings.delete-account') }}" class="p-6">
                         @csrf
                         @method('DELETE')
 
-                        <flux:heading level="2" class="text-lg font-medium">
-                            {{ __('Are you sure you want to delete your account?') }}
-                        </flux:heading>
+                        <h2 class="text-lg font-medium">{{ __('Are you sure you want to delete your account?') }}</h2>
 
-                        <flux:text class="mt-4">
+                        <p class="mt-4">
                             {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
-                        </flux:text>
+                        </p>
 
                         <div class="mt-6">
-                            <flux:input
+                            <x-input
                                 type="password"
                                 name="password"
-                                :label="__('Password')"
+                                label="{{ __('Password') }}"
                                 class="mt-1 block w-3/4"
                                 placeholder="{{ __('Password') }}"
                                 required
@@ -144,16 +142,16 @@
                         </div>
 
                         <div class="mt-6 flex justify-end">
-                            <flux:button type="button" variant="subtle" @click="confirmingUserDeletion = false">
+                            <x-button type="button" variant="subtle" @click="confirmingUserDeletion = false">
                                 {{ __('Cancel') }}
-                            </flux:button>
+                            </x-button>
 
-                            <flux:button type="submit" variant="danger" class="ms-3">
+                            <x-button type="submit" variant="danger" class="ms-3">
                                 {{ __('Delete Account') }}
-                            </flux:button>
+                            </x-button>
                         </div>
                     </form>
-                </flux:modal>
+                </x-modal>
             </div>
 
         </x-settings.layout>

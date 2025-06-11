@@ -7,7 +7,7 @@
                 <div class="flex items-center">
                     <div
                         class="p-3 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mr-4">
-                        <flux:icon name="currency-dollar" class="h-6 w-6"/>
+                        <x-icon name="currency-dollar" class="h-6 w-6"/>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Revenue</p>
@@ -21,7 +21,7 @@
             <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
-                        <flux:icon name="shopping-bag" class="h-6 w-6"/>
+                        <x-icon name="shopping-bag" class="h-6 w-6"/>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Orders</p>
@@ -37,7 +37,7 @@
                     <div class="flex items-center">
                         <div
                             class="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-4">
-                            <flux:icon name="clock" class="h-6 w-6"/>
+                            <x-icon name="clock" class="h-6 w-6"/>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Pending Orders</p>
@@ -54,7 +54,7 @@
                     <div class="flex items-center">
                         <div
                             class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-4">
-                            <flux:icon name="check-circle" class="h-6 w-6"/>
+                            <x-icon name="check-circle" class="h-6 w-6"/>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Completed Orders</p>
@@ -69,7 +69,7 @@
                 <div class="flex items-center">
                     <div
                         class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-4">
-                        <flux:icon name="users" class="h-6 w-6"/>
+                        <x-icon name="users" class="h-6 w-6"/>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Customers</p>
@@ -85,7 +85,7 @@
                     <div class="flex items-center">
                         <div
                             class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 mr-4">
-                            <flux:icon name="cube" class="h-6 w-6"/>
+                            <x-icon name="cube" class="h-6 w-6"/>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Products</p>
@@ -99,7 +99,7 @@
             <x-card class="p-6 bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 mr-4">
-                        <flux:icon name="user-plus" class="h-6 w-6"/>
+                        <x-icon name="user-plus" class="h-6 w-6"/>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">New Customers (30d)</p>
@@ -114,7 +114,7 @@
                    class="block hover:bg-zinc-50 dark:hover:bg-zinc-800/50 -m-6 p-6 rounded-lg">
                     <div class="flex items-center">
                         <div class="p-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mr-4">
-                            <flux:icon name="archive-box-x-mark" class="h-6 w-6"/>
+                            <x-icon name="archive-box-x-mark" class="h-6 w-6"/>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Out of Stock Products</p>
@@ -134,7 +134,7 @@
                 <a href="{{ route('admin.products.create') }}"
                    class="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
                     <div class="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-3">
-                        <flux:icon name="plus" class="h-5 w-5"/>
+                        <x-icon name="plus" class="h-5 w-5"/>
                     </div>
                     <span class="text-sm font-medium text-zinc-900 dark:text-white">Add New Product</span>
                 </a>
@@ -143,7 +143,7 @@
                    class="flex items-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
                     <div
                         class="p-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-3">
-                        <flux:icon.clipboard variant="outline" class="h-5 w-5"/>
+                        <x-icon name="clipboard" variant="outline" class="h-5 w-5"/>
                     </div>
                     <span class="text-sm font-medium text-zinc-900 dark:text-white">View All Orders</span>
                 </a>
@@ -152,7 +152,7 @@
                    class="flex items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
                     <div
                         class="p-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mr-3">
-                        <flux:icon name="users" class="h-5 w-5"/>
+                        <x-icon name="users" class="h-5 w-5"/>
                     </div>
                     <span class="text-sm font-medium text-zinc-900 dark:text-white">Manage Users</span>
                 </a>
@@ -284,7 +284,7 @@
                                         @else
                                             <div
                                                 class="w-8 h-8 bg-zinc-200 dark:bg-zinc-700 rounded mr-3 flex-shrink-0 flex items-center justify-center">
-                                                <flux:icon name="photo"
+                                                <x-icon name="photo"
                                                            class="w-4 h-4 text-zinc-400 dark:text-zinc-500"/>
                                             </div>
                                         @endif

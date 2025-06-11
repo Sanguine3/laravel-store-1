@@ -5,7 +5,7 @@
         <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-700 mb-4">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <flux:icon name="check-circle" class="h-5 w-5 text-green-400 dark:text-green-300" />
+                    <x-icon name="check-circle" class="h-5 w-5 text-green-400 dark:text-green-300" />
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-green-800 dark:text-green-200">
@@ -19,7 +19,7 @@
         <div class="rounded-md bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-700 mb-4">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <flux:icon name="exclamation-circle" class="h-5 w-5 text-red-400 dark:text-red-300" />
+                    <x-icon name="exclamation-circle" class="h-5 w-5 text-red-400 dark:text-red-300" />
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-red-800 dark:text-red-200">

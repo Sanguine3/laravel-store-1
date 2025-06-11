@@ -2,8 +2,8 @@
 
 namespace App\Http\View\Composers;
 
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class CartComposer
 {
@@ -13,7 +13,7 @@ class CartComposer
      * @param View $view
      * @return void
      */
-    public function compose(View $view)
+    public function compose(View $view): void
     {
         $cart = Session::get('cart', []);
         // Directly count the number of unique product lines in the cart.

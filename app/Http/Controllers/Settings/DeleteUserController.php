@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Settings\DeleteUserRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -13,15 +13,12 @@ class DeleteUserController extends Controller
     /**
      * Delete the authenticated user's account.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Settings\DeleteUserRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Request $request)
+    public function destroy(DeleteUserRequest $request)
     {
-        // 1. Validate the password confirmation
-        $request->validateWithBag('userDeletion', [ // Use specific error bag from the view
-            'password' => ['required', 'current_password'],
-        ]);
+        // Validation passed, proceed to delete account
 
         // 2. Get the authenticated user
         $user = $request->user();

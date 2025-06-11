@@ -33,52 +33,51 @@
             @csrf
 
             <!-- Email Address -->
-            {{-- Assuming flux:input handles displaying @error('email') internally or add it --}}
-            <flux:input
+            <x-input
                 name="email"
-                :label="__('Email address')"
+                label="{{ __('Email address') }}"
                 type="email"
                 required
                 autofocus
                 autocomplete="email"
                 placeholder="email@example.com"
-                :value="old('email')" {{-- Use old() helper --}}
+                value="{{ old('email') }}"
             />
 
             <!-- Password -->
             <div class="relative">
-                {{-- Assuming flux:input handles displaying @error('password') internally or add it --}}
-                <flux:input
+                <x-input
                     name="password"
-                    :label="__('Password')"
+                    label="{{ __('Password') }}"
                     type="password"
                     required
                     autocomplete="current-password"
-                    :placeholder="__('Password')"
+                    placeholder="{{ __('Password') }}"
                 />
 
                 @if (Route::has('password.request'))
-                    {{-- Keep standard link, no wire:navigate --}}
-                    <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')">
+                    <x-link class="absolute end-0 top-0 text-sm" href="{{ route('password.request') }}">
                         {{ __('Forgot your password?') }}
-                    </flux:link>
+                    </x-link>
                 @endif
             </div>
 
             <!-- Remember Me -->
-            {{-- Use standard name attribute --}}
-            <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
+            <x-checkbox
+                name="remember"
+                label="{{ __('Remember me') }}"
+                checked="{{ old('remember') }}"
+            />
 
             <div class="flex items-center justify-end">
-                <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+                <x-button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</x-button>
             </div>
         </form>
 
         @if (Route::has('register'))
             <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
                 {{ __('Don\'t have an account?') }}
-                {{-- Keep standard link, no wire:navigate --}}
-                <flux:link :href="route('register.form')">{{ __('Sign up') }}</flux:link>
+                <x-link :href="route('register.form')">{{ __('Sign up') }}</x-link>
             </div>
         @endif
     </div>

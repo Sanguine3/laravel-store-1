@@ -28,16 +28,12 @@ class LoginController extends Controller
     /**
      * Handle an incoming authentication request.
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return RedirectResponse
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        // 1. Validate the request
-        $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        // Validation passed
 
         // 2. Ensure not rate limited
         $this->ensureIsNotRateLimited($request);
@@ -71,12 +67,12 @@ class LoginController extends Controller
     /**
      * Ensure the authentication request is not rate limited.
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return void
      *
      * @throws ValidationException
      */
-    protected function ensureIsNotRateLimited(Request $request): void
+    protected function ensureIsNotRateLimited(LoginRequest $request): void
     {
         if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
@@ -97,10 +93,10 @@ class LoginController extends Controller
     /**
      * Get the authentication rate limiting throttle key.
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return string
      */
-    protected function throttleKey(Request $request): string
+    protected function throttleKey(LoginRequest $request): string
     {
         return Str::transliterate(Str::lower($request->input('email')) . '|' . $request->ip());
     }
@@ -108,7 +104,7 @@ class LoginController extends Controller
     /**
      * Log the user out of the application.
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return RedirectResponse
      */
     public function logout(Request $request)

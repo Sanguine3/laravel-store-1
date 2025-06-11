@@ -32,63 +32,58 @@
             @csrf
 
             <!-- Name -->
-            {{-- Assuming flux:input handles displaying @error('name') internally or add it --}}
-            <flux:input
+            <x-input
                 name="name"
-                :label="__('Name')"
+                label="{{ __('Name') }}"
                 type="text"
                 required
                 autofocus
                 autocomplete="name"
-                :placeholder="__('Full name')"
-                :value="old('name')"
+                placeholder="{{ __('Full name') }}"
+                value="{{ old('name') }}"
             />
 
             <!-- Email Address -->
-            {{-- Assuming flux:input handles displaying @error('email') internally or add it --}}
-            <flux:input
+            <x-input
                 name="email"
-                :label="__('Email address')"
+                label="{{ __('Email address') }}"
                 type="email"
                 required
                 autocomplete="email"
                 placeholder="email@example.com"
-                :value="old('email')"
+                value="{{ old('email') }}"
             />
 
             <!-- Password -->
-            {{-- Assuming flux:input handles displaying @error('password') internally or add it --}}
-            <flux:input
+            <x-input
                 name="password"
-                :label="__('Password')"
+                label="{{ __('Password') }}"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Password')"
+                placeholder="{{ __('Password') }}"
             />
 
             <!-- Confirm Password -->
-            {{-- Assuming flux:input handles displaying @error('password_confirmation') internally or add it --}}
-            <flux:input
+            <x-input
                 name="password_confirmation"
-                :label="__('Confirm password')"
+                label="{{ __('Confirm password') }}"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Confirm password')"
+                placeholder="{{ __('Confirm password') }}"
             />
 
             <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full">
+                <x-button type="submit" variant="primary" class="w-full">
                     {{ __('Create account') }}
-                </flux:button>
+                </x-button>
             </div>
         </form>
 
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
             {{ __('Already have an account?') }}
-            {{-- Remove wire:navigate --}}
-            <flux:link :href="route('login.form')">{{ __('Log in') }}</flux:link>
+            <x-link href="{{ route('login.form') }}">{{ __('Log in') }}</x-link>
         </div>
     </div>
 </x-layouts.auth>

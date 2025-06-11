@@ -41,9 +41,9 @@
 
                 {{-- Current Password --}}
                 <div>
-                    <flux:input
+                    <x-input
                         name="current_password"
-                        :label="__('Current password')"
+                        label="{{ __('Current password') }}"
                         type="password"
                         required
                         autocomplete="current-password"
@@ -55,9 +55,9 @@
 
                 {{-- New Password --}}
                  <div>
-                    <flux:input
+                    <x-input
                         name="password"
-                        :label="__('New password')"
+                        label="{{ __('New password') }}"
                         type="password"
                         required
                         autocomplete="new-password"
@@ -69,9 +69,9 @@
 
                 {{-- Confirm New Password --}}
                 <div>
-                    <flux:input
+                    <x-input
                         name="password_confirmation"
-                        :label="__('Confirm Password')"
+                        label="{{ __('Confirm Password') }}"
                         type="password"
                         required
                         autocomplete="new-password"
@@ -82,7 +82,7 @@
 
                 <div class="flex items-center gap-4">
                     <div class="flex items-center justify-end">
-                        <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
+                        <x-button variant="primary" type="submit" class="w-full">{{ __('Save') }}</x-button>
                     </div>
                     {{-- Action message replaced by session status check --}}
                 </div>

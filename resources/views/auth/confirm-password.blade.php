@@ -38,17 +38,17 @@
             @csrf
 
             <!-- Password -->
-            <flux:input
+            <x-input
                 name="password"
-                :label="__('Password')"
+                label="{{ __('Password') }}"
                 type="password"
                 required
-                autocomplete="current-password" {{-- Use current-password for confirmation --}}
-                :placeholder="__('Password')"
+                autocomplete="current-password"
+                placeholder="{{ __('Password') }}"
                 autofocus
             />
 
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Confirm') }}</flux:button>
+            <x-button variant="primary" type="submit" class="w-full">{{ __('Confirm') }}</x-button>
         </form>
     </div>
 </x-layouts.auth>

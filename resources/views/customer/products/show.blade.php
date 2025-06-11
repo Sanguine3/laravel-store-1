@@ -72,14 +72,13 @@
                                             </button>
                                         </div>
                                         {{-- Add to Cart Button with Icon, Gradient, and Effects --}}
-                                        <flux:button type="submit" variant="primary"
-                                                     class="flex-1 sm:flex-none px-6 py-2 font-semibold flex items-center gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-lg shadow-orange-500/30 transition-all duration-200 ease-in-out transform hover:scale-105 hover:from-pink-500 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 active:scale-95"
-                                                     tooltip="Add this product to your cart!"
-                                                     tooltip:position="right"
+                                        <x-button type="submit" variant="primary"
+                                                  class="flex-1 sm:flex-none px-6 py-2 font-semibold flex items-center gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-lg shadow-orange-500/30 transition-all duration-200 ease-in-out transform hover:scale-105 hover:from-pink-500 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 active:scale-95"
+                                                  :disabled="$product->stock_quantity <= 0"
                                         >
-                                            <flux:icon name="shopping-cart" class="h-5 w-5 inline-block" />
+                                            <x-icon name="shopping-cart" class="h-5 w-5 inline-block" />
                                             <span>Add to Cart</span>
-                                        </flux:button>
+                                        </x-button>
                                     </div>
                                 </form>
                           </div>

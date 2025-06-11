@@ -28,7 +28,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $order->created_at->format('M d, Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <flux:badge size="sm" inset="top bottom" @class([
+                                            <x-badge size="sm" inset="top bottom" @class([
                                                 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' => $order->status === 'completed',
                                                 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400' => $order->status === 'pending' || $order->status === 'processing',
                                                 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' => $order->status === 'cancelled',
@@ -36,7 +36,7 @@
                                                 'bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-400' => !in_array($order->status, ['completed','pending', 'processing', 'cancelled', 'shipped']),
                                             ])>
                                                 {{ ucfirst($order->status) }}
-                                            </flux:badge>
+                                            </x-badge>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-zinc-900 dark:text-white">${{ number_format($order->total_amount, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -47,9 +47,9 @@
                                     <tr>
                                         <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white text-center">
                                             <div class="py-8">
-                                                <flux:icon name="shopping-bag" class="h-10 w-10 mx-auto text-gray-400 dark:text-gray-500" />
+                                                <x-icon name="shopping-bag" class="h-10 w-10 mx-auto text-gray-400 dark:text-gray-500" />
                                                 <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No orders found</h3>
-                                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You haven’t placed any orders yet.</p>
+                                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You haven't placed any orders yet.</p>
                                             </div>
                                         </td>
                                     </tr>

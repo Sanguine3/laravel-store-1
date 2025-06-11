@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -37,14 +37,9 @@ class ResetPasswordController extends Controller
      *
      * @throws ValidationException
      */
-    public function reset(Request $request)
+    public function reset(ResetPasswordRequest $request)
     {
-        // 1. Validate the incoming request data
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+        // Validation passed
 
         // 2. Attempt to reset the password
         $status = Password::reset(

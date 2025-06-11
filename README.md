@@ -1,98 +1,104 @@
-# LaraStore
+# MyApp
 
-A modern web application built with Laravel and Livewire, featuring a responsive design and powerful UI components.
+A Laravel web application using Blade, Alpine.js, and Grid.js for a streamlined front-end experience.
 
 ## ✨ Features
 
-- 🚀 Laravel 10.x
-- ⚡ Livewire for dynamic interfaces
-- 🎨 Blade components for UI
-- 📊 Integrated with Flux for state management
-- 🔍 Search functionality
-- 📱 Responsive design
-- 🛠 Developer-friendly with Laravel's ecosystem
+- Laravel 12.x
+- Blade Components for reusable UI
+- Alpine.js for lightweight interactivity
+- Grid.js for dynamic tables (search, sort, pagination)
+- Tailwind CSS for styling
+- Blade Icons (Heroicons, Phosphor, Tabler)
+- Vanilla JS fetch helpers for AJAX
 
-## 🛠 Tech Stack
+## 📦 Tech Stack
 
-- **Backend**: PHP 8.4+, Laravel 10.x
-- **Frontend**: Livewire, Alpine.js
+- **Backend**: PHP 8.4+, Laravel 12
+- **Frontend**: Blade + Alpine.js + Grid.js
 - **Styling**: Tailwind CSS
-- **Icons**: Blade Icons (Heroicons, Phosphor, Tabler)
-- **Database**: MySQL/PostgreSQL/SQLite
-- **Development Tools**: Laravel Sail, Laravel Tinker
+- **Build Tool**: Vite
+- **Testing**: PHPUnit
+- **CI**: GitHub Actions
 
-## 🚀 Installation
+## 🚀 Getting Started
 
-1. **Clone the repository**
+### Prerequisites
+
+- PHP >= 8.4
+- Composer
+- Node.js >= 18
+- Git
+- SQLite (default) or MySQL/PostgreSQL
+
+### Installation
+
+1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/larastore.git
-   cd larastore
+   git clone https://github.com/<your-username>/my-app.git
+   cd my-app
    ```
-
-2. **Install PHP dependencies**
+2. Install PHP dependencies:
    ```bash
-   composer install
+   composer install --no-interaction --prefer-dist
    ```
-
-3. **Install NPM dependencies**
+3. Install Node.js dependencies:
    ```bash
-   npm install
+   npm ci
    ```
-
-4. **Environment Setup**
+4. Copy and configure environment variables:
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-
-5. **Database Setup**
-   - Configure your `.env` file with database credentials
-   - Run migrations and seeders:
-     ```bash
-     php artisan migrate --seed
-     ```
-
-6. **Start the development server**
+5. Run database migrations:
    ```bash
-   php artisan serve
-   ```
-   
-   For frontend assets:
-   ```bash
-   npm run dev
+   php artisan migrate
    ```
 
-## 🔧 Configuration
+## 🛠 Development
 
-- Edit `.env` for environment-specific settings
-- Configure mail settings in `.env` for email functionality
-- Set up your preferred cache and queue drivers
+Run the local development server and asset watcher:
+
+```bash
+npm run dev
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Visit http://127.0.0.1:8000
 
 ## 🧪 Testing
 
-Run the test suite:
+Run the PHP test suite with PHPUnit:
+
 ```bash
 php artisan test
 ```
 
+## 🎨 Building for Production
+
+Compile and minify assets for production:
+
+```bash
+npm run build
+```
+
+## 🔄 Continuous Integration
+
+A minimal GitHub Actions workflow (`.github/workflows/ci.yml`) runs on push/PR to `main`:
+
+- Installs PHP & Node.js dependencies
+- Runs migrations & PHPUnit tests
+- Builds frontend assets
+
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to origin (`git push origin feature/YourFeature`)
 5. Open a Pull Request
 
 ## 📄 License
 
-This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).
-
-## 🔗 Links
-
-- [Laravel Documentation](https://laravel.com/docs)
-- [Livewire Documentation](https://laravel-livewire.com/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
-
----
-
-Built with ❤️ using Laravel & Livewire
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details. 
