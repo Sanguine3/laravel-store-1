@@ -1,27 +1,48 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Auth\ConfirmPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Customer\CartController;
-use App\Http\Controllers\Customer\CheckoutController;
-use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
-use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
-use App\Http\Controllers\Customer\ProductController;
+use App\Http\Controllers\Customer\ProductActions\IndexController as CustomerProductIndexController;
+use App\Http\Controllers\Customer\ProductActions\ShowController as CustomerProductShowController;
+use App\Http\Controllers\Admin\DashboardActions\IndexController as AdminDashboardIndexController;
+use App\Http\Controllers\Admin\ProductActions\IndexController as ProductIndexController;
+use App\Http\Controllers\Admin\ProductActions\CreateController as ProductCreateController;
+use App\Http\Controllers\Admin\ProductActions\StoreController as ProductStoreController;
+use App\Http\Controllers\Admin\ProductActions\EditController as ProductEditController;
+use App\Http\Controllers\Admin\ProductActions\UpdateController as ProductUpdateController;
+use App\Http\Controllers\Admin\ProductActions\DestroyController as ProductDestroyController;
+use App\Http\Controllers\Admin\CategoryActions\IndexController as CategoryIndexController;
+use App\Http\Controllers\Admin\CategoryActions\CreateController as CategoryCreateController;
+use App\Http\Controllers\Admin\CategoryActions\StoreController as CategoryStoreController;
+use App\Http\Controllers\Admin\CategoryActions\EditController as CategoryEditController;
+use App\Http\Controllers\Admin\CategoryActions\UpdateController as CategoryUpdateController;
+use App\Http\Controllers\Admin\CategoryActions\DestroyController as CategoryDestroyController;
+use App\Http\Controllers\Admin\OrderActions\IndexController as AdminOrderIndexController;
+use App\Http\Controllers\Admin\OrderActions\ShowController as AdminOrderShowController;
+use App\Http\Controllers\Admin\OrderActions\UpdateStatusController as AdminOrderUpdateStatusController;
+use App\Http\Controllers\Admin\UserActions\IndexController as UserIndexController;
+use App\Http\Controllers\Admin\UserActions\CreateController as UserCreateController;
+use App\Http\Controllers\Admin\UserActions\StoreController as UserStoreController;
+use App\Http\Controllers\Admin\UserActions\EditController as UserEditController;
+use App\Http\Controllers\Admin\UserActions\UpdateController as UserUpdateController;
+use App\Http\Controllers\Admin\UserActions\DestroyController as UserDestroyController;
+use App\Http\Controllers\Admin\UserActions\RestoreController as UserRestoreController;
+use App\Http\Controllers\Customer\DashboardActions\IndexController as CustomerDashboardIndexController;
+use App\Http\Controllers\Customer\OrderActions\IndexController as CustomerOrderIndexController;
+use App\Http\Controllers\Customer\OrderActions\ShowController as CustomerOrderShowController;
+
+// Added
+use App\Http\Controllers\Customer\CartActions\AddController as CartAddController;
+use App\Http\Controllers\Customer\CartActions\ViewController as CartViewController;
+use App\Http\Controllers\Customer\CartActions\UpdateController as CartUpdateController;
+use App\Http\Controllers\Customer\CartActions\RemoveController as CartRemoveController;
+use App\Http\Controllers\Customer\CheckoutActions\ShowFormController as CheckoutShowFormController;
+use App\Http\Controllers\Customer\CheckoutActions\ProcessController as CheckoutProcessController;
+use App\Http\Controllers\Settings\ProfileActions\EditController as ProfileEditController;
+use App\Http\Controllers\Settings\ProfileActions\UpdateController as ProfileUpdateController;
+use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\AppearanceController;
 use App\Http\Controllers\Settings\DeleteUserController;
-use App\Http\Controllers\Settings\PasswordController;
-use App\Http\Controllers\Settings\ProfileController;
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,93 +50,86 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public routes
-Route::get('/', [WelcomeController::class, 'index'])->name('home');
-Route::resource('products', ProductController::class)->only(['index', 'show']);
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
-// Guest-only routes
-Route::middleware('guest')->group(function () {
-    // Login
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login.form');
-    Route::post('login', [LoginController::class, 'login'])->name('login');
+//Product routes
+Route::get('/products', CustomerProductIndexController::class)->name('products.index');
+Route::get('/products/{product}', CustomerProductShowController::class)->name('products.show');
 
-    // Register
-    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
-    Route::post('register', [RegisterController::class, 'register'])->name('register');
 
-    // Password reset links
-    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-
-    // Reset password
-    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-});
-
-// Authenticated routes
-Route::middleware('auth')->group(function () {
-    // Logout
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
-    // Email verification
-    Route::get('verify-email', [VerifyEmailController::class, 'showNotice'])->name('verification.notice');
-    Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
-    Route::post('email/verification-notification', [VerifyEmailController::class, 'sendVerificationNotification'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
-
-    // Confirm password
-    Route::get('confirm-password', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
-    Route::post('confirm-password', [ConfirmPasswordController::class, 'confirm'])->name('password.confirm.post');
-});
-
-// Authenticated and verified routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Customer dashboard
-    Route::get('dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', CustomerDashboardIndexController::class)
+        ->name('dashboard');
 
-    // Customer orders
-    Route::resource('orders', CustomerOrderController::class)->only(['index', 'show']);
+    // Order routes
+    Route::get('/orders', CustomerOrderIndexController::class)->name('orders');
+    Route::get('/orders/{order}', CustomerOrderShowController::class)->name('orders.show');
 
     // Cart routes
     Route::prefix('cart')->name('cart.')->group(function () {
-        Route::post('add/{product}', [CartController::class, 'add'])->name('add');
-        Route::get('/', [CartController::class, 'index'])->name('view');
-        Route::patch('update/{productId}', [CartController::class, 'update'])->name('update');
-        Route::delete('remove/{productId}', [CartController::class, 'remove'])->name('remove');
+        Route::post('/add/{product}', CartAddController::class)->name('add');
+        Route::get('/', CartViewController::class)->name('view');
+        Route::patch('/update/{productId}', CartUpdateController::class)->name('update');
+        Route::delete('/remove/{productId}', CartRemoveController::class)->name('remove');
     });
 
     // Checkout routes
     Route::prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', [CheckoutController::class, 'show'])->name('show');
-        Route::post('/', [CheckoutController::class, 'process'])->name('process');
+        Route::get('/', CheckoutShowFormController::class)->name('show');
+        Route::post('/', CheckoutProcessController::class)->name('process');
     });
 
     // Settings routes
-    Route::redirect('settings', 'settings/profile');
-    Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
-        Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::middleware(['auth'])->group(function () {
+        Route::redirect('settings', 'settings/profile');
 
-        Route::get('password', [PasswordController::class, 'edit'])->name('password');
-        Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+        Route::get('settings/profile', ProfileEditController::class)->name('settings.profile');
+        Route::patch('settings/profile', ProfileUpdateController::class)->name('settings.profile.update');
 
-        Route::get('appearance', [AppearanceController::class, 'edit'])->name('appearance');
-        Route::delete('delete-account', [DeleteUserController::class, 'destroy'])->name('delete-account');
+        Route::get('settings/password', [PasswordController::class, 'edit'])->name('settings.password');
+        Route::put('settings/password', [PasswordController::class, 'update'])->name('settings.password.update');
+
+        Route::get('settings/appearance', [AppearanceController::class, 'edit'])->name('settings.appearance');
+        Route::delete('settings/delete-account', [DeleteUserController::class, 'destroy'])->name('settings.delete-account');
     });
+
 
     // Admin routes
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+        Route::get('/', AdminDashboardIndexController::class)->name('dashboard');
 
-        Route::resource('products', AdminProductController::class);
-        Route::resource('categories', AdminCategoryController::class);
-        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'edit', 'update']);
-        Route::resource('users', AdminUserController::class)->except(['show']);
-        Route::put('users/{user}/restore', [AdminUserController::class, 'restore'])
-            ->withTrashed()
-            ->name('users.restore');
+        // Admin Products
+        Route::get('/products', ProductIndexController::class)->name('products.index');
+        Route::get('/products/create', ProductCreateController::class)->name('products.create');
+        Route::post('/products', ProductStoreController::class)->name('products.store');
+        Route::get('/products/{product}/edit', ProductEditController::class)->name('products.edit');
+        Route::put('/products/{product}', ProductUpdateController::class)->name('products.update');
+        Route::delete('/products/{product}', ProductDestroyController::class)->name('products.destroy');
+
+        // Admin Categories
+        Route::get('/categories', CategoryIndexController::class)->name('categories.index');
+        Route::get('/categories/create', CategoryCreateController::class)->name('categories.create');
+        Route::post('/categories', CategoryStoreController::class)->name('categories.store');
+        Route::get('/categories/{category}/edit', CategoryEditController::class)->name('categories.edit');
+        Route::put('/categories/{category}', CategoryUpdateController::class)->name('categories.update');
+        Route::delete('/categories/{category}', CategoryDestroyController::class)->name('categories.destroy');
+
+        // Admin Orders
+        Route::get('/orders', AdminOrderIndexController::class)->name('orders.index');
+        Route::get('/orders/{order}', AdminOrderShowController::class)->name('orders.show');
+        Route::put('/orders/{order}/status', AdminOrderUpdateStatusController::class)->name('orders.updateStatus');
+
+        // Admin Users
+        Route::get('/users', UserIndexController::class)->name('users.index');
+        Route::get('/users/create', UserCreateController::class)->name('users.create');
+        Route::post('/users', UserStoreController::class)->name('users.store');
+        Route::get('/users/{user}/edit', UserEditController::class)->name('users.edit');
+        Route::put('/users/{user}', UserUpdateController::class)->name('users.update');
+        Route::delete('/users/{user}', UserDestroyController::class)->name('users.destroy');
+        Route::put('/users/{user}/restore', UserRestoreController::class)->name('users.restore');
     });
 });
+
+require __DIR__ . '/auth.php'; // Auth routes

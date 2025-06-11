@@ -8,21 +8,20 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class VerifyEmailController extends Controller
 {
     /**
      * Display the email verification prompt.
      *
-     * @return Response
+     * @return View|RedirectResponse
      */
-    public function showNotice(Request $request): Response
+    public function showNotice(Request $request): View|RedirectResponse
     {
         return $request->user()->hasVerifiedEmail()
             ? redirect()->intended(route('dashboard', absolute: false))
-            : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
+            : view('auth.verify-email');
     }
 
     /**

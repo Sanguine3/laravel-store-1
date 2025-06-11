@@ -3,26 +3,26 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
     /**
      * Display the login view.
      *
-     * @return Response
+     * @return View
      */
     public function showLoginForm()
     {
-        return Inertia::render('Auth/Login');
+        return view('auth.login');
     }
 
     /**
@@ -30,7 +30,6 @@ class LoginController extends Controller
      *
      * @param Request $request
      * @return RedirectResponse
-     * @throws ValidationException
      */
     public function login(Request $request)
     {
@@ -112,7 +111,7 @@ class LoginController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request)
     {
         Auth::guard('web')->logout();
 
